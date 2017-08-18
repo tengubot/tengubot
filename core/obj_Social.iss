@@ -123,10 +123,10 @@ objectdef obj_Social
   {
    This.CorpWhiteList:Add[${Me.Corp.ID}]
   }
-  if ${Me.AllianceID} > 0
-  {
-   This.AllianceWhiteList:Add[${Me.AllianceID}]
-  }
+;  if ${Me.AllianceID} > 0
+;  {
+;   This.AllianceWhiteList:Add[${Me.AllianceID}]
+;  }
 
   if ${This.WhiteListPilotIterator:First(exists)}
   do
@@ -205,7 +205,7 @@ objectdef obj_Social
     UI:UpdateConsole["WARNING! LOCAL IGNORED! use whitelist and use standings both disabled!"]
    }
 
-   SystemSafe:Set[${Math.Calc[${This.CheckLocalWhiteList} & ${This.CheckLocalBlackList} & ${This.CheckStanding}].Int(bool)}]
+   SystemSafe:Set[${Math.Calc[${This.CheckLocalWhiteList} & ${This.CheckLocalBlackList} & ${This.CheckLocalStanding}].Int(bool)}]
 
 ; begin of cooldown timer:
    if ${IsSafeCooldown} == 0 && !${SystemSafe} && ${Config.Combat.UseSafeCooldown}
@@ -258,9 +258,23 @@ objectdef obj_Social
     if ${tgtIterator:First(exists)}
     do
     {
-     if ${tgtIterator.Value.Owner.Corp.ID} != ${Me.Corp.ID}
+     variable bool badgrid
+     badgrid:Set[FALSE]
+     if !${Config.Combat.GameOverGridNeutral}
      {
-      UI:UpdateConsole["!!! hostile in grid at ${tgtIterator.Value.Distance} !!! emergency logoff !!!"]
+      if ${tgtIterator.Value.Owner.Corp.ID} != ${Me.Corp.ID}
+      {
+       badgrid:Set[TRUE]
+      }
+     } else {
+      if !${This.goodguy[${tgtIterator.Value.Owner}]}
+      {
+       badgrid:Set[TRUE]
+      }
+     }
+     if ${badgrid}
+     {
+      UI:UpdateConsole["!!! hostile ${tgtIterator.Value.Owner.Name} in grid at ${tgtIterator.Value.Distance} !!! emergency logoff !!!"]
  ;----- start screenshot -----
  Display:Screencap[ \
   ${Me.Name}- \
@@ -369,69 +383,72 @@ objectdef obj_Social
  }
 ;=========================================================
 
-
- ; Returns false if pilots with failed standing are in system
- member:bool CheckStanding()
+ member:bool goodguy(pilot guy)
  {
-  variable iterator PilotIterator
   variable index:float standings
   variable iterator standings_iterator
-  variable bool goodguy
 
+  standings:Clear
+  standings:Insert[${guy.Standing.MeToPilot}]
+  standings:Insert[${guy.Standing.MeToCorp}]
+  standings:Insert[${guy.Standing.MeToAlliance}]
+  standings:Insert[${guy.Standing.CorpToPilot}]
+  standings:Insert[${guy.Standing.CorpToCorp}]
+  standings:Insert[${guy.Standing.CorpToAlliance}]
+  standings:Insert[${guy.Standing.AllianceToPilot}]
+  standings:Insert[${guy.Standing.AllianceToCorp}]
+  standings:Insert[${guy.Standing.AllianceToAlliance}]
+  standings:GetIterator[standings_iterator]
+  if ${standings_iterator:First(exists)}
+  do
+  {
+   if ${standings_iterator.Value} > 0
+   {
+    return TRUE
+    break
+   }
+   elseif ${standings_iterator.Value} < 0
+   {
+    return FALSE
+    break
+   }
+  }
+  while ${standings_iterator:Next(exists)}
+  return FALSE
+ }
+
+ ; Returns false if pilots with failed standing are in system
+ member:bool CheckLocalStanding()
+ {
+  variable index:pilot pilot_index
+  variable iterator pilot_iterator
+
+  EVE:GetLocalPilots[pilot_index]
   if ( \
-   ${Config.Combat.MinStanding} < -10 || \
-   ${This.PilotIndex.Used} < 2 || \
+   ${pilot_index.Used} < 2 || \
    !${Config.Combat.UseStandings}\
   )
   {
    return TRUE
   }
 
-  This.PilotIndex:GetIterator[PilotIterator]
-  if ${PilotIterator:First(exists)}
+  pilot_index:GetIterator[pilot_iterator]
+  if ${pilot_iterator:First(exists)}
   do
   {
-   standings:Clear
-   standings:Insert[${PilotIterator.Value.Standing.MeToPilot}]
-   standings:Insert[${PilotIterator.Value.Standing.MeToCorp}]
-   standings:Insert[${PilotIterator.Value.Standing.MeToAlliance}]
-   standings:Insert[${PilotIterator.Value.Standing.CorpToPilot}]
-   standings:Insert[${PilotIterator.Value.Standing.CorpToCorp}]
-   standings:Insert[${PilotIterator.Value.Standing.CorpToAlliance}]
-   standings:Insert[${PilotIterator.Value.Standing.AllianceToPilot}]
-   standings:Insert[${PilotIterator.Value.Standing.AllianceToCorp}]
-   standings:Insert[${PilotIterator.Value.Standing.AllianceToAlliance}]
-   goodguy:Set[FALSE]
-
-   standings:GetIterator[standings_iterator]
-   if ${standings_iterator:First(exists)}
-   do
-   {
-    if ${standings_iterator.Value} > 0
-    {
-     goodguy:Set[TRUE]
-     break
-    }
-    elseif ${standings_iterator.Value} < 0
-    {
-     goodguy:Set[FALSE]
-     break
-    }
-   }
-   while ${standings_iterator:Next(exists)}
    if ( \
-     ${PilotIterator.Value.CharID} != -1 && \
-     ${PilotIterator.Value.CharID} != ${Me.CharID} && \
-     ${PilotIterator.Value.Corp.ID} != ${Me.Corp.ID} && \
-     !${Me.Fleet.IsMember[${PilotIterator.Value.CharID}]} && \
-     !${goodguy} \
-    )
+    ${pilot_iterator.Value.CharID} != -1 && \
+    ${pilot_iterator.Value.CharID} != ${Me.CharID} && \
+    ${pilot_iterator.Value.Corp.ID} != ${Me.Corp.ID} && \
+    !${Me.Fleet.IsMember[${pilot_iterator.Value.CharID}]} && \
+    !${This.goodguy[${pilot_iterator.Value}]} \
+   )
    {
-    UI:UpdateConsole["bad standing ${PilotIterator.Value.Name} p ${PilotIterator.Value.CharID} c ${PilotIterator.Value.Corp.ID} a ${PilotIterator.Value.AllianceID}", LOG_CRITICAL]
+    UI:UpdateConsole["bad standing ${pilot_iterator.Value.Name} p ${pilot_iterator.Value.CharID} c ${pilot_iterator.Value.Corp.ID} a ${pilot_iterator.Value.AllianceID}", LOG_CRITICAL]
     return FALSE
    }
   }
-  while ${PilotIterator:Next(exists)}
+  while ${pilot_iterator:Next(exists)}
   return TRUE
  }
 

@@ -519,6 +519,12 @@ objectdef obj_Ratter
 
   if !${Config.Coords.Support}
   {
+   if ${Config.Combat.AbandonWrecks}
+   {
+    UI:UpdateConsole["abandoning wrecks"]
+    Entity["GroupID = 186"]:AbandonAll
+   }
+
    UI:UpdateConsole["Flying to next anomaly."]
 
 ; for inventory debug only
@@ -685,9 +691,13 @@ function Scanner()
         if ${This.Social.GankWereHere}
         {
          call Ship.WarpToBookMark ${ScanMarkIterator.Value.ID}, ${Config.Coords.WarpRange}
-
-         wait 50
-
+         wait 30
+         if ${This.AnotherPlayerIsHere}
+         {
+          This.FirstInPlex:Set[FALSE]
+          return
+         }
+/*
          ;if ${Config.Combat.MySingleLocal}
          ;{
           if !${Social.IsPlayerInMyRange}
@@ -723,13 +733,18 @@ function Scanner()
            return
           }
          ;}
+*/
         }
         else
         {
          call Ship.WarpToBookMark ${ScanMarkIterator.Value.ID}, ${Config.Coords.WarpRange}
-
          wait 50
-
+         if ${This.AnotherPlayerIsHere}
+         {
+          This.FirstInPlex:Set[FALSE]
+          return
+         }
+/*
          ;if ${Config.Combat.MySingleLocal}
          ;{
           if !${Social.IsPlayerInMyRange}
@@ -765,6 +780,7 @@ function Scanner()
            return
           }
          ;}
+*/
         }
        }
        else
@@ -847,6 +863,14 @@ function AnomalyBookmark()
      {
       call Ship.WarpToBookMark ${ScanMarkIterator.Value.ID}, ${Config.Coords.WarpRange}
       wait 50
+      if ${This.AnotherPlayerIsHere}
+      {
+       ScanMarkIterator.Value:Remove
+       This.CurrentState:Set["MOVE"]
+       return
+      }
+
+/*
       if !${Social.IsPlayerInMyRange}
       {
        UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
@@ -882,11 +906,20 @@ function AnomalyBookmark()
        This.CurrentState:Set["MOVE"]
        return
       }
+*/
      }
      else
      {
       call Ship.WarpToBookMark ${ScanMarkIterator.Value.ID}, ${Config.Coords.WarpRange}
       wait 50
+      if ${This.AnotherPlayerIsHere}
+      {
+       ScanMarkIterator.Value:Remove
+       This.CurrentState:Set["MOVE"]
+       return
+      }
+
+/*
       if !${Social.IsPlayerInMyRange}
       {
        UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
@@ -922,6 +955,7 @@ function AnomalyBookmark()
        This.CurrentState:Set["MOVE"]
        return
       }
+*/
      }
      wait 20
      EVE:Execute[CmdStopShip]
@@ -1131,6 +1165,31 @@ function CloseInventory()
  EVEWindow[ByItemID,${MyShip.ID}]:Close
  wait 10
 }
+;========================================================================================================================================================================
+member:bool AnotherPlayerIsHere()
+{
+ UI:UpdateConsole["AnotherPlayerHere():"]
+ if !${Config.Combat.RunAnotherPlayer}
+ {
+  UI:UpdateConsole["seeking of another player marks is disabled"]
+  return FALSE
+ }
+ variable index:entity tgtIndex
+ variable iterator tgtIterator
+ EVE:QueryEntities[tgtIndex, "CategoryID = CATEGORYID_SHIP || GroupID = GROUPID_WRECK || GroupID = GROUPID_CARGO_CONTAINER"]
+ tgtIndex:GetIterator[tgtIterator]
+ if ${tgtIterator:First(exists)}
+ do
+ {
+  if ${tgtIterator.Value.Owner.CharID} != ${Me.CharID}
+  {
+   UI:UpdateConsole["found another player mark g ${tgtIterator.Value.Group} n ${tgtIterator.Value.Name} o ${tgtIterator.Value.Owner.Name}"]
+   return TRUE
+  }
+ }
+ while ${tgtIterator:Next(exists)}
+ UI:UpdateConsole["another player marks not found"]
+}
 
 ;========================================================================================================================================================================
 function OrbitCenterOfAnomaly(int OrbitDistance)
@@ -1153,15 +1212,15 @@ function ResetFleetMembers()
   FleetMembers:GetIterator[FleetMember]
   if ${FleetMember:First(exists)}
   {
-    do
-    {
+   do
+   {
     if ${FleetMember.Value.ToPilot.Name.NotEqual[${Config.Coords.PilotToSupport}]}
     {
-    echo wowowow
-    FleetMembers:Remove[${FleetMember.Key}]
+     echo wowowow
+     FleetMembers:Remove[${FleetMember.Key}]
     }
-    }
-    while ${FleetMember:Next(exists)}
+   }
+   while ${FleetMember:Next(exists)}
   }
   FleetMembers:Collapse
   echo ${FleetMembers.Used} - after collapse

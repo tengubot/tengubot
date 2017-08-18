@@ -659,6 +659,16 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[GameOverGrid, ${value}]
  }
 
+ member:bool GameOverGridNeutral()
+ {
+  return ${This.CombatRef.FindSetting[GameOverGridNeutral, FALSE]}
+ }
+
+ method SetGameOverGridNeutral(bool value)
+ {
+  This.CombatRef:AddSetting[GameOverGridNeutral, ${value}]
+ }
+
  member:bool GameOverHostileScrambled()
  {
   return ${This.CombatRef.FindSetting[GameOverHostileScrambled, TRUE]}
@@ -767,6 +777,26 @@ objectdef obj_Configuration_Combat
  method SetScoopOnUnsafe(bool value)
  {
   This.CombatRef:AddSetting[ScoopOnUnsafe, ${value}]
+ }
+
+ member:bool RunAnotherPlayer()
+ {
+  return ${This.CombatRef.FindSetting[RunAnotherPlayer, TRUE]}
+ }
+
+ method SetRunAnotherPlayer(bool value)
+ {
+  This.CombatRef:AddSetting[RunAnotherPlayer, ${value}]
+ }
+
+ member:bool AbandonWrecks()
+ {
+  return ${This.CombatRef.FindSetting[AbandonWrecks, TRUE]}
+ }
+
+ method SetAbandonWrecks(bool value)
+ {
+  This.CombatRef:AddSetting[RunAbandonWrecks, ${value}]
  }
 
 }

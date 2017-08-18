@@ -37,6 +37,7 @@
 variable(global) obj_Cache_Me _Me
 variable(global) obj_Cache_EVETime _EVETime
 variable(global) bool evebot_crashed=TRUE
+;variable(global) bool evebot_crashed=FALSE     ; debug
 
 function atexit()
 {

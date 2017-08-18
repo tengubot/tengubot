@@ -43,7 +43,7 @@
      <Y>8</Y>
      <Width>170</Width>
      <Height>20</Height>
-     <Text>vorcbot 20120916</Text>
+     <Text>vorcbot 20121115</Text>
     </text>
     <button Name='SaveSettings' template='EveSkin.Window.ClickButton'>
      <X>r73</X>
@@ -2118,8 +2118,8 @@
             </OnLoad>
            </combobox>
            <checkbox name='cbGameOverGrid'>
-            <X>115</X>
-            <Y>110</Y>
+            <X>10</X>
+            <Y>190</Y>
             <Height>20</Height>
             <Width>100</Width>
             <text>gameover grid</text>
@@ -2129,9 +2129,41 @@
              {
               This:SetChecked
              }
+             else
+             {
+              UIElement[EVEBot].FindUsableChild[cbGameOverGridNeutral,checkbox]:UnsetChecked
+             }
             </OnLoad>
             <OnLeftClick>
+             if !${This.Checked}
+             {
+              UIElement[EVEBot].FindUsableChild[cbGameOverGridNeutral,checkbox]:UnsetChecked
+              Script[EVEBot].VariableScope.Config.Combat:SetGameOverGridNeutral[${This.Checked}]
+             }
              Script[EVEBot].VariableScope.Config.Combat:SetGameOverGrid[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbGameOverGridNeutral'>
+            <X>120</X>
+            <Y>190</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>neutral and lower</text>
+            <AutoTooltip>apply gameover grid to neutral and lower standings.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.GameOverGridNeutral}
+             {
+              This:SetChecked
+              UIElement[EVEBot].FindUsableChild[cbGameOverGrid,checkbox]:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             if ${This.Checked}
+             {
+              UIElement[EVEBot].FindUsableChild[cbGameOverGrid,checkbox]:SetChecked
+              Script[EVEBot].VariableScope.Config.Combat:SetGameOverGrid[${This.Checked}]
+             }
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverGridNeutral[${This.Checked}]
             </OnLeftClick>
            </checkbox>
            <checkbox name='cbGameOverHostileScrambled'>
@@ -2218,6 +2250,41 @@
              Script[EVEBot].VariableScope.Config.Combat:SetAlwaysArmorBoost[${This.Checked}]
             </OnLeftClick>
            </checkbox>
+           <checkbox name='cbRunAnotherPlayer'>
+            <X>115</X>
+            <Y>110</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>run another player</Text>
+            <AutoTooltip>If checked, bot will skip anomaly if another player or their wrecks is there.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.RunAnotherPlayer}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetRunAnotherPlayer[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbAbandonWrecks'>
+            <X>10</X>
+            <Y>210</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>abandon wrecks</Text>
+            <AutoTooltip>If checked, bot will abandon wrecks after finish anomaly.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.AbandonWrecks}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetAbandonWrecks[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+
           </children>
          </frame>
         </Tab>
