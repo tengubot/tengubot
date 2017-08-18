@@ -161,7 +161,7 @@
        <ButtonWidth>18</ButtonWidth>
        <Items>
         <Item Value='1'>Ratter</Item>
-
+        <Item Value='2'>Delegator</Item>
        </Items>
        <OnSelect>
         Script[EVEBot].VariableScope.Config.Common:SetBotMode[${This.SelectedItem.Value}]
@@ -326,12 +326,166 @@
 
 
      <Tab name='combat'>
-
+      <Text name='textOutsideOrbit'>
+       <X>10</X>
+       <Y>10</Y>
+       <Height>10</Height>
+       <Width>100</Width>
+       <Text>outside orbit</Text>
+       <AutoTooltip>delegator only: orbit distance in meters, when system safe</AutoTooltip>
+      </Text>
+      <Textentry name='teOutsideOrbit'>
+       <X>90</X>
+       <Y>10</Y>
+       <Width>80</Width>
+       <Height>18</Height>
+       <MaxLength>40</MaxLength>
+       <OnLoad>
+        This:SetText[${Script[EVEBot].VariableScope.Config.Combat.OutsideOrbit}]
+       </OnLoad>
+       <OnChange>
+        if ${This.Text.Length} > 0
+        {
+         Script[EVEBot].VariableScope.Config.Combat:SetOutsideOrbit[${This.Text}]
+        }
+        else
+        {
+         Script[EVEBot].VariableScope.Config.Coords:SetOutsideOrbit["5000"]
+        }
+       </OnChange>
+      </Textentry>
+      <Text name='textInsideOrbit'>
+       <X>10</X>
+       <Y>30</Y>
+       <Height>20</Height>
+       <Width>100</Width>
+       <Text>inside orbit</Text>
+       <AutoTooltip>delegator only: orbit distance in meters, when system unsafe</AutoTooltip>
+      </Text>
+      <Textentry name='teInsideOrbit'>
+       <X>90</X>
+       <Y>30</Y>
+       <Width>80</Width>
+       <Height>18</Height>
+       <MaxLength>40</MaxLength>
+       <OnLoad>
+        This:SetText[${Script[EVEBot].VariableScope.Config.Combat.InsideOrbit}]
+       </OnLoad>
+       <OnChange>
+        if ${This.Text.Length} > 0
+        {
+         Script[EVEBot].VariableScope.Config.Combat:SetInsideOrbit[${This.Text}]
+        }
+        else
+        {
+         Script[EVEBot].VariableScope.Config.Coords:SetInsideOrbit["3000"]
+        }
+       </OnChange>
+      </Textentry>
+      <Text name='textFleetMembersQty'>
+       <X>10</X>
+       <Y>50</Y>
+       <Height>20</Height>
+       <Width>100</Width>
+       <Text>fleet qty</Text>
+       <AutoTooltip>delegator only: fleet members qty without delegator himself</AutoTooltip>
+      </Text>
+      <Textentry name='teFleetQty'>
+       <X>90</X>
+       <Y>50</Y>
+       <Width>80</Width>
+       <Height>18</Height>
+       <MaxLength>40</MaxLength>
+       <OnLoad>
+        This:SetText[${Script[EVEBot].VariableScope.Config.Combat.FleetQty}]
+       </OnLoad>
+       <OnChange>
+        if ${This.Text.Length} > 0
+        {
+         Script[EVEBot].VariableScope.Config.Combat:SetFleetQty[${This.Text}]
+        }
+        else
+        {
+         Script[EVEBot].VariableScope.Config.Coords:SetFleetQty["2"]
+        }
+       </OnChange>
+      </Textentry>
+      <Text name='textClickInterval'>
+       <X>10</X>
+       <Y>70</Y>
+       <Height>20</Height>
+       <Width>350</Width>
+       <Text>click interval              plus random              seconds</Text>
+       <AutoTooltip>delegator only: click to delegate interval</AutoTooltip>
+      </Text>
+      <combobox name='comboDelegatorClickInterval'>
+       <X>80</X>
+       <Y>70</Y>
+       <Width>50</Width>
+       <Height>15</Height>
+       <FullHeight>200</FullHeight>
+       <ButtonWidth>20</ButtonWidth>
+       <Items>
+        <Item Value='10'>10</Item>
+        <Item Value='20'>20</Item>
+        <Item Value='30'>30</Item>
+        <Item Value='40'>40</Item>
+        <Item Value='50'>50</Item>
+        <Item Value='60'>60</Item>
+       </Items>
+       <OnSelect>
+        Script[EVEBot].VariableScope.Config.Combat:SetDelegatorClickInterval[${This.SelectedItem.Value}]
+       </OnSelect>
+       <OnLoad>
+        This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.DelegatorClickInterval}].ID}]
+       </OnLoad>
+      </combobox>
+      <combobox name='comboDelegatorClickIntervalRandom'>
+       <X>200</X>
+       <Y>70</Y>
+       <Width>50</Width>
+       <Height>15</Height>
+       <FullHeight>200</FullHeight>
+       <ButtonWidth>20</ButtonWidth>
+       <Items>
+        <Item Value='10'>10</Item>
+        <Item Value='20'>20</Item>
+        <Item Value='30'>30</Item>
+        <Item Value='40'>40</Item>
+        <Item Value='50'>50</Item>
+        <Item Value='60'>60</Item>
+       </Items>
+       <OnSelect>
+        Script[EVEBot].VariableScope.Config.Combat:SetDelegatorClickIntervalRandom[${This.SelectedItem.Value}]
+       </OnSelect>
+       <OnLoad>
+        This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.DelegatorClickIntervalRandom}].ID}]
+       </OnLoad>
+      </combobox>
+      <checkbox name='cbScoopOnUnsafe'>
+       <X>5</X>
+       <Y>90</Y>
+       <Height>20</Height>
+       <Width>100</Width>
+       <Text>scoop on unsafe</Text>
+       <AutoTooltip>delegator only: if checked, bot will return all fighters to dronebay when system unsafe</AutoTooltip>
+       <OnLoad>
+        if ${Script[EVEBot].VariableScope.Config.Combat.ScoopOnUnsafe}
+        {
+         This:SetChecked
+        }
+       </OnLoad>
+       <OnLeftClick>
+        Script[EVEBot].VariableScope.Config.Combat:SetScoopOnUnsafe[${This.Checked}]
+       </OnLeftClick>
+      </checkbox>
+<!--
+не знаю зачем эта хуйня, вроде и без неё всё работает.
       <Frame name='frmDefenceOptions'>
        <X>5</X>
        <Y>5</Y>
        <Height>195</Height>
-       <Width>48%</Width>
+       <Width>49%</Width>
        <Border>1</Border>
        <Children>
        </Children>
@@ -346,7 +500,7 @@
        <Children>
        </Children>
       </Frame>
-
+-->
       <Frame name='frmRatter'>
        <X>5</X>
        <Y>205</Y>
@@ -556,7 +710,7 @@
        <Y>10</Y>
        <Width>150</Width>
        <Height>10</Height>
-       <Text>Bookmark Prefixes</Text>
+       <Text>bookmark prefixes:</Text>
       </Text>
 <!-- safe spots prefix -->
       <Text name='SafeSpotsLabel'>
@@ -564,7 +718,7 @@
        <Y>28</Y>
        <Width>200</Width>
        <Height>10</Height>
-       <Text>Safe Spots:</Text>
+       <Text>safe spot:</Text>
        <AutoTooltip>The prefix for safe spot bookmark names.</AutoTooltip>
       </Text>
       <Textentry name='SafeSpotPrefix'>
@@ -594,7 +748,7 @@
        <Y>48</Y>
        <Width>200</Width>
        <Height>10</Height>
-       <Text>Ammo Spot:</Text>
+       <Text>ammo spot:</Text>
        <AutoTooltip>The name for ammo spot bookmark.</AutoTooltip>
       </Text>
       <Textentry name='AmmoSpot'>
@@ -956,8 +1110,8 @@
        <Y>60</Y>
        <Width>100</Width>
        <Height>10</Height>
-       <Text>Recover</Text>
-       <AutoTooltip>      X : Y coordinates of RECOVER button in scanner</AutoTooltip>
+       <Text>drones</Text>
+       <AutoTooltip>      X : Y coordinates of drones in space folder</AutoTooltip>
       </Text>
       <Textentry name='RecoverbuttonX'>
        <X>70</X>

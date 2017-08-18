@@ -29,6 +29,7 @@
 
 /* Behavior/Mode Includes */
 #include Behaviors/obj_Ratter.iss
+#include Behaviors/obj_Delegator.iss
 ;#include Behaviors/obj_Bomzh.iss
 ;#include Behaviors/obj_Anomaly.iss
 
@@ -111,6 +112,7 @@ function main()
  /* Script-Defined Behavior Objects */
  declarevariable BotModules index:string script
  declarevariable Ratter obj_Ratter script
+ declarevariable Delegator obj_Delegator script
  ;declarevariable Bomzh obj_Bomzh script
 
  ;echo "${Time} EVEBot: Loaded"

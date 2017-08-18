@@ -6,5 +6,6 @@
 
 function main()
 {
+	EVEBotBehaviors:Set[obj_Delegator, TRUE]
 	EVEBotBehaviors:Set[obj_Ratter, TRUE]
 }

@@ -112,7 +112,7 @@ objectdef obj_Configuration_Common
 
   ; We use both so we have an ID to use to set the default selection in the UI.
   This.CommonRef:AddSetting[Bot Mode,1]
-  This.CommonRef:AddSetting[Bot Mode Name,RATTER]
+  This.CommonRef:AddSetting[Bot Mode Name,Ratter]
   This.CommonRef:AddSetting[Home Station,1]
   This.CommonRef:AddSetting[Use Development Build,FALSE]
   This.CommonRef:AddSetting[Drones In Bay,0]
@@ -138,7 +138,7 @@ objectdef obj_Configuration_Common
 
  member:string BotModeName()
  {
-  return ${This.CommonRef.FindSetting[Bot Mode Name, MINER]}
+  return ${This.CommonRef.FindSetting[Bot Mode Name, Ratter]}
  }
 
  method SetBotModeName(string value)
@@ -709,6 +709,66 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[GameOverArmorTrashHold, ${value}]
  }
 
+ member:int OutsideOrbit()
+ {
+  return ${This.CombatRef.FindSetting[OutsideOrbit, 5000]}
+ }
+
+ method SetOutsideOrbit(int value)
+ {
+  This.CombatRef:AddSetting[OutsideOrbit, ${value}]
+ }
+
+ member:int InsideOrbit()
+ {
+  return ${This.CombatRef.FindSetting[InsideOrbit, 4000]}
+ }
+
+ method SetInsideOrbit(int value)
+ {
+  This.CombatRef:AddSetting[InsideOrbit, ${value}]
+ }
+
+ member:int FleetQty()
+ {
+  return ${This.CombatRef.FindSetting[FleetQty, 2]}
+ }
+
+ method SetFleetQty(int value)
+ {
+  This.CombatRef:AddSetting[FleetQty, ${value}]
+ }
+
+ member:int DelegatorClickInterval()
+ {
+  return ${This.CombatRef.FindSetting[DelegatorClickInterval, 30]}
+ }
+
+ method SetDelegatorClickInterval(int value)
+ {
+  This.CombatRef:AddSetting[DelegatorClickInterval, ${value}]
+ }
+
+ member:int DelegatorClickIntervalRandom()
+ {
+  return ${This.CombatRef.FindSetting[DelegatorClickIntervalRandom, 60]}
+ }
+
+ method SetDelegatorClickIntervalRandom(int value)
+ {
+  This.CombatRef:AddSetting[DelegatorClickIntervalRandom, ${value}]
+ }
+
+ member:bool ScoopOnUnsafe()
+ {
+  return ${This.CombatRef.FindSetting[ScoopOnUnsafe, TRUE]}
+ }
+
+ method SetScoopOnUnsafe(bool value)
+ {
+  This.CombatRef:AddSetting[ScoopOnUnsafe, ${value}]
+ }
+
 }
 
 /* ************************************************************************* */
@@ -883,8 +943,8 @@ objectdef obj_Configuration_Coords
   BaseConfig.BaseRef:AddSet[${This.SetName}]
   This.CoordsRef:AddSetting[ScanX, 56]
   This.CoordsRef:AddSetting[ScanY, 56"]
-  This.CoordsRef:AddSetting[RecoverX, 104]
-  This.CoordsRef:AddSetting[RecoverY, 56]
+  This.CoordsRef:AddSetting[RecoverX, -1]
+  This.CoordsRef:AddSetting[RecoverY, -1]
   This.CoordsRef:AddSetting[ReConX, 136]
   This.CoordsRef:AddSetting[ReConY, 56]
   This.CoordsRef:AddSetting[1stProbeX, -1]
@@ -928,18 +988,16 @@ objectdef obj_Configuration_Coords
  }
  member:int RecoverX()
  {
-  return ${This.CoordsRef.FindSetting[RecoverX, 104]}
+  return ${This.CoordsRef.FindSetting[RecoverX, -1]}
  }
-
  method SetRecoverX(int RecoverX)
  {
   This.CoordsRef:AddSetting[RecoverX, ${RecoverX}]
  }
  member:int RecoverY()
  {
-  return ${This.CoordsRef.FindSetting[RecoverY, 56]}
+  return ${This.CoordsRef.FindSetting[RecoverY, -1]}
  }
-
  method SetRecoverY(int RecoverY)
  {
   This.CoordsRef:AddSetting[RecoverY, ${RecoverY}]

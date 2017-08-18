@@ -19,6 +19,7 @@ objectdef obj_Drones
  variable int CategoryID_Drones = 18
  variable int LaunchedDrones = 0
  variable bool WaitingForDrones = FALSE
+ variable time WaitingForDronesTime
  variable bool DronesReady = FALSE
  variable int ShortageCount
  variable iterator ShipDroneIterator
@@ -41,16 +42,15 @@ objectdef obj_Drones
  }
  method Shutdown()
  {
-     UI:UpdateConsole["Recalling 1: !${Me.InStation}"]
-     if !${Me.InStation}
-     {
-
-      UI:UpdateConsole["Recalling 2: (${Me.ToEntity.Mode} != 3)"]
-         if (${Me.ToEntity.Mode} != 3)
-         {
-          UI:UpdateConsole["Recalling Drones prior to shutdown..."]
-          EVE:DronesReturnToDroneBay[This.ActiveDroneIDList]
-      }
+  UI:UpdateConsole["Recalling 1: !${Me.InStation}"]
+  if !${Me.InStation}
+  {
+   UI:UpdateConsole["Recalling 2: (${Me.ToEntity.Mode} != 3)"]
+   if (${Me.ToEntity.Mode} != 3)
+   {
+    UI:UpdateConsole["Recalling Drones prior to shutdown..."]
+    EVE:DronesReturnToDroneBay[This.ActiveDroneIDList]
+   }
   }
   Event[EVENT_ONFRAME]:DetachAtom[This:Pulse]
  }
@@ -64,23 +64,22 @@ objectdef obj_Drones
 
   if ${This.WaitingForDrones}
   {
-      if ${Time.Timestamp} >= ${This.NextPulse.Timestamp}
+   if ${Time.Timestamp} >= ${This.NextPulse.Timestamp}
    {
-       if !${Me.InStation}
-       {
-        This.LaunchedDrones:Set[${This.DronesInSpace}]
-        if  ${This.LaunchedDrones} > 0
-        {
-         This.WaitingForDrones:Set[FALSE]
-         This.DronesReady:Set[TRUE]
+    if !${Me.InStation}
+    {
+     This.LaunchedDrones:Set[${This.DronesInSpace}]
+     if ${This.LaunchedDrones} > 0 || ${Time.Timestamp} > ${This.WaitingForDronesTime.Timestamp}
+     {
+      This.WaitingForDrones:Set[FALSE]
+      This.DronesReady:Set[TRUE]
 
-         UI:UpdateConsole["${This.LaunchedDrones} drones deployed"]
-        }
-                }
-
-       This.NextPulse:Set[${Time.Timestamp}]
-       This.NextPulse.Second:Inc[${This.PulseIntervalInSeconds}]
-       This.NextPulse:Update
+      UI:UpdateConsole["${This.LaunchedDrones} drones deployed"]
+     }
+    }
+    This.NextPulse:Set[${Time.Timestamp}]
+    This.NextPulse.Second:Inc[${This.PulseIntervalInSeconds}]
+    This.NextPulse:Update
    }
   }
  }
@@ -90,30 +89,31 @@ objectdef obj_Drones
   ;echo launching drones
   if ${This.DronesInBay} > 0
   {
-   echo ${ActiveDroneIDList.Used}
+   ;echo ${ActiveDroneIDList.Used}
    if ${This.DronesInSpace} < ${Me.MaxActiveDrones}
    {
-     switch ${CurrentDrones}
-     {
-        case LIGHT
-         EVE:LaunchDrones[LightDronesIndex]
-         break
-        case MEDIUM
-         EVE:LaunchDrones[MediumDronesIndex]
-         break
-        case HEAVY
-         EVE:LaunchDrones[HeavyDronesIndex]
-         break
-        case SENTRY
-         EVE:LaunchDrones[SentryDronesIndex]
-         break
-        case FIGHTERS
-         EVE:LaunchDrones[FighterDronesIndex]
-         break
-        default
-        break
-     }
-     This.WaitingForDrones:Set[TRUE]
+    switch ${CurrentDrones}
+    {
+     case LIGHT
+      EVE:LaunchDrones[LightDronesIndex]
+      break
+     case MEDIUM
+      EVE:LaunchDrones[MediumDronesIndex]
+      break
+     case HEAVY
+      EVE:LaunchDrones[HeavyDronesIndex]
+      break
+     case SENTRY
+      EVE:LaunchDrones[SentryDronesIndex]
+      break
+     case FIGHTERS
+      EVE:LaunchDrones[FighterDronesIndex]
+      break
+     default
+      break
+    }
+    This.WaitingForDrones:Set[TRUE]
+    This.WaitingForDronesTime:Set[${Time.Timestamp:Inc[5]}]
    }
   }
  }
@@ -121,19 +121,15 @@ objectdef obj_Drones
 
  method SwitchCurrentDrones(string DronesToSwitch)
  {
-  echo ${DronesToSwitch}
+  ;echo ${DronesToSwitch}
   if ${CurrentDrones.NotEqual[${DronesToSwitch}]}
   {
-
    call This.ReturnAllToDroneBay
    CurrentDrones:Set[${DronesToSwitch}]
    UI:UpdateConsole["obj_Drones:Current Drones Changed To "]
    This:LaunchAll
   }
  }
-
-
-
 
  member:int DronesInBay()
  {
@@ -250,14 +246,12 @@ objectdef obj_Drones
    variable index:activedrone ActiveDroneList
    Me:GetActiveDrones[ActiveDroneList]
    ActiveDroneList:GetIterator[DroneIterator]
-   echo activedrones  is  - ${ActiveDroneList.Used}
    UI:UpdateConsole["ActiveDroneList: ${ActiveDroneList.Used}"]
    variable index:int64 returnIndex
    variable index:int64 engageIndex
 
    do
    {
-
     ;= проверка файтеров если дамажат и шилд меньше 70% заберает в дрон бей
     if ${DroneIterator.Value.ToEntity.ShieldPct} < 60
     {
@@ -343,9 +337,39 @@ function ShipDroneList()
 
 ;==================================================================
 
+; обработчик делегированных файтеров
+ function FightersAction()
+ {
+  variable index:entity tgtIndex
+  variable iterator tgtIterator
+  variable index:int64 engageIndex
 
-
-
+  EVE:QueryEntities[tgtIndex, "GroupID = 549"]
+  tgtIndex:GetIterator[tgtIterator]
+  if ${tgtIterator:First(exists)}
+  {
+   do
+   {
+    if ${tgtIterator.Value.ShieldPct} < 77
+    {
+     UI:UpdateConsole["fighter under attack, return control"]
+     Mouse:SetPosition[${Config.Coords.RecoverX},${Config.Coords.RecoverY}]
+     wait ${Config.Coords.MouseDelay}
+     Mouse:RightClick
+     wait ${Config.Coords.MouseDelay}
+     Mouse:SetPosition[${Math.Calc[${Config.Coords.RecoverX}+30]}, ${Math.Calc[${Config.Coords.RecoverY}+30]}]
+     wait ${Config.Coords.MouseDelay}
+     Mouse:LeftClick
+     wait ${Config.Coords.MouseDelay}
+     break
+    }
+    engageIndex:Insert[${tgtIterator.Value.ID}]
+   }
+   while ${tgtIterator:Next(exists)}
+;   EVE:DronesEngageMyTarget[engageIndex]
+   EVE:Execute[CmdDronesEngage]
+  }
+ }
 
 
 

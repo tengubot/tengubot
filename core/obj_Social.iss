@@ -200,6 +200,11 @@ objectdef obj_Social
     This.EntityIndex:Clear
    }
 
+   if !${Config.Combat.UseWhiteList} && !${Config.Combat.UseStandings}
+   {
+    UI:UpdateConsole["WARNING! LOCAL IGNORED! use whitelist and use standings both disabled!"]
+   }
+
    SystemSafe:Set[${Math.Calc[${This.CheckLocalWhiteList} & ${This.CheckLocalBlackList} & ${This.CheckStanding}].Int(bool)}]
 
 ; begin of cooldown timer:
@@ -255,7 +260,7 @@ objectdef obj_Social
     {
      if ${tgtIterator.Value.Owner.Corp.ID} != ${Me.Corp.ID}
      {
-      UI:UpdateConsole["!!! hostile in grid !!! emergency logoff !!!"]
+      UI:UpdateConsole["!!! hostile in grid at ${tgtIterator.Value.Distance} !!! emergency logoff !!!"]
  ;----- start screenshot -----
  Display:Screencap[ \
   ${Me.Name}- \

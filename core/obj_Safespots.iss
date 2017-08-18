@@ -173,7 +173,7 @@ objectdef obj_Safespots
   {
    UI:UpdateConsole["Safespot distance: ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${SafeSpotIterator.Value.X}, ${SafeSpotIterator.Value.Y}, ${SafeSpotIterator.Value.Z}]} - approaching..."]
    SafeSpotIterator.Value:Approach
-   wait 10
+   wait 50
   }
  }
 }

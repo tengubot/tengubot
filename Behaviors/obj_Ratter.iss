@@ -243,7 +243,7 @@ objectdef obj_Ratter
   Ship:Activate_SensorBoost
   Ship:Activate_Tracking_Computer
   Ship:Activate_ECCM
-  ;UI:UpdateConsole["Activate SensorBoost"]
+  call Ship.Drones.FightersAction
 
   if ${Ship.Drones.DronesInSpace} > 0
   {
@@ -733,7 +733,7 @@ function Scanner()
          ;if ${Config.Combat.MySingleLocal}
          ;{
           if !${Social.IsPlayerInMyRange}
-                        {
+          {
            UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
            wait 10
            if !${Social.IsPlayerInMyRange}
@@ -748,7 +748,7 @@ function Scanner()
             {
              UI:UpdateConsole["CHECK N3: Found another player, LEAVING PLEX!"]
              This.FirstInPlex:Set[FALSE]
-               return
+             return
             }
            }
            else
@@ -872,7 +872,7 @@ function AnomalyBookmark()
         UI:UpdateConsole["CHECK N2: Found another player, LEAVING PLEX!"]
         ScanMarkIterator.Value:Remove
         This.CurrentState:Set["MOVE"]
-          return
+        return
        }
       }
       else
@@ -880,7 +880,7 @@ function AnomalyBookmark()
        UI:UpdateConsole["CHECK N1: Found another player, LEAVING PLEX!"]
        ScanMarkIterator.Value:Remove
        This.CurrentState:Set["MOVE"]
-        return
+       return
       }
      }
      else

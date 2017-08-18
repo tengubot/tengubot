@@ -116,6 +116,21 @@ objectdef obj_Targets
   SpecialTargets:Insert["Selynne"]   /* officers */
   SpecialTargets:Insert["Brokara"]   /* officers */
   SpecialTargets:Insert["True Sansha"]   /* officers */
+  UI:UpdateConsole["Loading target list Serpentis", LOG_CRITICAL]
+  PriorityTargets:Insert["Coreli Guardian Agent"]  /* web/scram */
+  PriorityTargets:Insert["Coreli Guardian Initiate"]  /* web/scram */
+  PriorityTargets:Insert["Coreli Guardian Scout"]  /* web/scram */
+  PriorityTargets:Insert["Coreli Guardian Spy"]  /* web/scram */
+  PriorityTargets:Insert["Guardian Agent"]  /* web/scram */
+  PriorityTargets:Insert["Guardian Initiate"]  /* web/scram */
+  PriorityTargets:Insert["Guardian Scout"]  /* web/scram */
+  PriorityTargets:Insert["Guardian Spy"]  /* web/scram */
+  PriorityTargets:Insert["Guardian Veteran"]  /* web */
+  SpecialTargets:Insert["Shadow"]    /* faction */
+  SpecialTargets:Insert["Brynn Jerdola"]    /* officers */
+  SpecialTargets:Insert["Cormack Vaaja"]    /* officers */
+  SpecialTargets:Insert["Setele Schellan"]    /* officers */
+  SpecialTargets:Insert["Tuvan Orth"]    /* officers */
 
   ; Get the iterators
   PriorityTargets:GetIterator[PriorityTarget]
@@ -493,7 +508,7 @@ objectdef obj_Targets
    {
     if ${Target.Value.IsLockedTarget}
     {
-     UI:UpdateConsole["Unlocking not priority target ${Target.Value.Name}"]
+     UI:UpdateConsole["Unlocking regular target ${Target.Value.Name}"]
      Target.Value:UnlockTarget
     }
    }

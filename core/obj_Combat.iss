@@ -507,9 +507,9 @@ objectdef obj_Combat
 
  function MyFlyToEnd()
  {
-  UI:UpdateConsole["Time: Status CHANGED to ${This.CurrentState} - end game."]
+  UI:UpdateConsole["MyFlyToEnd: Status CHANGED to ${This.CurrentState} - end game."]
 
-  call Safespots.WarpTo
+  call Safespots.WarpToNextSafeSpot
   wait 10
 
 ; +++ storing vessel
@@ -521,11 +521,11 @@ objectdef obj_Combat
     UI:UpdateConsole["ship maint array found"]
     Entity["TypeID = 12237"]:Approach
     wait 20
-    while ${Entity["TypeID = 12237"].Distance} > 2000
+    while ${Entity["TypeID = 12237"].Distance} > 2900
     {
-     UI:UpdateConsole["trying to approach"]
+     UI:UpdateConsole["ship maint array: ${Entity["TypeID = 12237"].Distance} - approaching"]
      Entity["TypeID = 12237"]:Approach
-     wait 20
+     wait 50
     }
     UI:UpdateConsole["closing inventory windows"]
     while ${EVEWindow[ByName,"Inventory"](exists)}
@@ -553,6 +553,7 @@ objectdef obj_Combat
     Mouse:LeftClick
     wait ${Config.Coords.MouseDelay}
     UI:UpdateConsole["ship stored, closing inventory windows"]
+    wait 50
     while ${EVEWindow[ByName,"Inventory"](exists)}
     {
      UI:UpdateConsole["closing inventory ${EVEWindow[ByName,"Inventory"].ItemID} c ${EVEWindow[ByName,"Inventory"].Caption} n ${EVEWindow[ByName,"Inventory"].Name}"]
@@ -570,8 +571,11 @@ objectdef obj_Combat
   {
    UI:UpdateConsole["storring vessel is not enabled, skipping"]
   }
+  wait 50
+  call Safespots.WarpTo
 ; --- storing vessel
 
+  wait 30
   UI:UpdateConsole["Quitting in 30 sec."]
  ;----- start screenshot -----
  Display:Screencap[ \
@@ -586,7 +590,7 @@ objectdef obj_Combat
  ]
  ;----- end screenshot -----
   wait 300
-  EVE:Execute[CmdQuitGame]
+  exit
  }
 }
 
