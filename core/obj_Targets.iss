@@ -72,6 +72,8 @@ objectdef obj_Targets
   PriorityTargets:Insert["Lockout Centry"]  /* web/scram */
   PriorityTargets:Insert["Strain Infester Alvi"]  /* web/scram */
   PriorityTargets:Insert["Strain Render Alvi"]  /* web/scram */
+  PriorityTargets:Insert["Brute Render Alvi"]  /* web/scram */
+  PriorityTargets:Insert["Strain Splinter Alvi"]  /* web/scram */
   PriorityTargets:Insert["Infestious Drone"]  /* web/scram */
   UI:UpdateConsole["Loading target list Angel", LOG_CRITICAL]
   PriorityTargets:Insert["Arch Angel Hijacker"]  /* web/scram */

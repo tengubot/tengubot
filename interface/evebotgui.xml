@@ -43,7 +43,7 @@
      <Y>8</Y>
      <Width>170</Width>
      <Height>20</Height>
-     <Text>vorcbot 20121115</Text>
+     <Text>vorcbot 20121212</Text>
     </text>
     <button Name='SaveSettings' template='EveSkin.Window.ClickButton'>
      <X>r73</X>
@@ -338,7 +338,7 @@
        <X>90</X>
        <Y>10</Y>
        <Width>80</Width>
-       <Height>18</Height>
+       <Height>15</Height>
        <MaxLength>40</MaxLength>
        <OnLoad>
         This:SetText[${Script[EVEBot].VariableScope.Config.Combat.OutsideOrbit}]
@@ -356,7 +356,7 @@
       </Textentry>
       <Text name='textInsideOrbit'>
        <X>10</X>
-       <Y>30</Y>
+       <Y>25</Y>
        <Height>20</Height>
        <Width>100</Width>
        <Text>inside orbit</Text>
@@ -364,9 +364,9 @@
       </Text>
       <Textentry name='teInsideOrbit'>
        <X>90</X>
-       <Y>30</Y>
+       <Y>25</Y>
        <Width>80</Width>
-       <Height>18</Height>
+       <Height>15</Height>
        <MaxLength>40</MaxLength>
        <OnLoad>
         This:SetText[${Script[EVEBot].VariableScope.Config.Combat.InsideOrbit}]
@@ -382,45 +382,17 @@
         }
        </OnChange>
       </Textentry>
-      <Text name='textFleetMembersQty'>
-       <X>10</X>
-       <Y>50</Y>
-       <Height>20</Height>
-       <Width>100</Width>
-       <Text>fleet qty</Text>
-       <AutoTooltip>delegator only: fleet members qty without delegator himself</AutoTooltip>
-      </Text>
-      <Textentry name='teFleetQty'>
-       <X>90</X>
-       <Y>50</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Combat.FleetQty}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Combat:SetFleetQty[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetFleetQty["2"]
-        }
-       </OnChange>
-      </Textentry>
       <Text name='textClickInterval'>
        <X>10</X>
-       <Y>70</Y>
-       <Height>20</Height>
+       <Y>40</Y>
+       <Height>15</Height>
        <Width>350</Width>
        <Text>click interval              plus random              seconds</Text>
        <AutoTooltip>delegator only: click to delegate interval</AutoTooltip>
       </Text>
       <combobox name='comboDelegatorClickInterval'>
        <X>80</X>
-       <Y>70</Y>
+       <Y>40</Y>
        <Width>50</Width>
        <Height>15</Height>
        <FullHeight>200</FullHeight>
@@ -442,7 +414,7 @@
       </combobox>
       <combobox name='comboDelegatorClickIntervalRandom'>
        <X>200</X>
-       <Y>70</Y>
+       <Y>40</Y>
        <Width>50</Width>
        <Height>15</Height>
        <FullHeight>200</FullHeight>
@@ -464,8 +436,8 @@
       </combobox>
       <checkbox name='cbScoopOnUnsafe'>
        <X>5</X>
-       <Y>90</Y>
-       <Height>20</Height>
+       <Y>55</Y>
+       <Height>15</Height>
        <Width>100</Width>
        <Text>scoop on unsafe</Text>
        <AutoTooltip>delegator only: if checked, bot will return all fighters to dronebay when system unsafe</AutoTooltip>
@@ -508,71 +480,6 @@
        <Width>98%</Width>
        <Border>1</Border>
        <Children>
-        <Text name='OrbitRangeLabel'>
-         <X>10</X>
-         <Y>10</Y>
-         <Width>200</Width>
-         <Height>10</Height>
-         <Text>Ratter Ship:</Text>
-         <AutoTooltip>Installation of the orbit for the ships</AutoTooltip>
-        </Text>
-        <combobox name='MyOrbitRange'>
-         <X>120</X>
-         <Y>8</Y>
-         <Width>115</Width>
-         <Height>15</Height>
-         <FullHeight>60</FullHeight>
-         <ButtonWidth>18</ButtonWidth>
-         <Items>
-          <Item Value='1'>Missales</Item>
-          <Item Value='2'>Vagabond</Item>
-          <Item Value='3'>Zealot</Item>
-         </Items>
-         <OnSelect>
-          Script[EVEBot].VariableScope.Config.Combat:SetMyOrbitRange[${This.SelectedItem.Value}]
-         </OnSelect>
-         <OnLoad>
-          This:SetSelection[${Script[EVEBot].VariableScope.Config.Combat.MyOrbitRange}]
-         </OnLoad>
-        </combobox>
-
-
-        <checkbox name='cbDeactivateMWD'>
-         <X>10</X>
-         <Y>30</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Disable MWD in orbit</Text>
-         <AutoTooltip>If checked, use disable MWD.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.DeactivateMWD}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetDeactivateMWD[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <checkbox name='cbFullDeactivateOrbit'>
-         <X>10</X>
-         <Y>50</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Full disable fly orbit</Text>
-         <AutoTooltip>If checked, use disable orbit fly.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.FullDeactivateOrbit}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetFullDeactivateOrbit[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
 
         <checkbox name='cbLaunchCombatDrones'>
          <X>10</X>
@@ -710,22 +617,43 @@
        <Y>10</Y>
        <Width>150</Width>
        <Height>10</Height>
-       <Text>bookmark prefixes:</Text>
+       <Text>scavenge:</Text>
+       <AutoTooltip>prefix for scavenge bookmark names. leave empty if dont want create it.</AutoTooltip>
       </Text>
+      <Textentry name='teScavengePrefix'>
+       <X>80</X>
+       <Y>10</Y>
+       <Width>100</Width>
+       <Height>15</Height>
+       <MaxLength>10</MaxLength>
+       <OnLoad>
+        This:SetText[${Script[EVEBot].VariableScope.Config.Labels.ScavengePrefix}]
+       </OnLoad>
+       <OnChange>
+        if ${This.Text.Length} > 0
+        {
+         Script[EVEBot].VariableScope.Config.Labels:SetScavengePrefix[${This.Text}]
+        }
+        else
+        {
+         Script[EVEBot].VariableScope.Config.Labels:SetScavengePrefix[""]
+        }
+       </OnChange>
+      </Textentry>
 <!-- safe spots prefix -->
-      <Text name='SafeSpotsLabel'>
-       <X>15</X>
-       <Y>28</Y>
+      <Text name='lbSafeSpotsLabel'>
+       <X>10</X>
+       <Y>25</Y>
        <Width>200</Width>
        <Height>10</Height>
        <Text>safe spot:</Text>
-       <AutoTooltip>The prefix for safe spot bookmark names.</AutoTooltip>
+       <AutoTooltip>prefix for safe spot bookmark names.</AutoTooltip>
       </Text>
-      <Textentry name='SafeSpotPrefix'>
-       <X>100</X>
+      <Textentry name='teSafeSpotPrefix'>
+       <X>80</X>
        <Y>25</Y>
-       <Width>80</Width>
-       <Height>18</Height>
+       <Width>100</Width>
+       <Height>15</Height>
        <MaxLength>10</MaxLength>
        <OnLoad>
         This:SetText[${Script[EVEBot].VariableScope.Config.Labels.SafeSpotPrefix}]
@@ -743,19 +671,19 @@
       </Textentry>
 
 <!-- ammo label -->
-      <Text name='AmmoLabel'>
-       <X>15</X>
-       <Y>48</Y>
+      <Text name='lbAmmoLabel'>
+       <X>10</X>
+       <Y>40</Y>
        <Width>200</Width>
        <Height>10</Height>
        <Text>ammo spot:</Text>
-       <AutoTooltip>The name for ammo spot bookmark.</AutoTooltip>
+       <AutoTooltip>prefix for ammo spot bookmark names.</AutoTooltip>
       </Text>
-      <Textentry name='AmmoSpot'>
-       <X>100</X>
-       <Y>45</Y>
-       <Width>80</Width>
-       <Height>18</Height>
+      <Textentry name='teAmmoSpot'>
+       <X>80</X>
+       <Y>40</Y>
+       <Width>100</Width>
+       <Height>15</Height>
        <MaxLength>10</MaxLength>
        <OnLoad>
         This:SetText[${Script[EVEBot].VariableScope.Config.Labels.AmmoSpot}]
@@ -772,6 +700,36 @@
        </OnChange>
       </Textentry>
 
+      <Text name='lbAnomalyName'>
+       <X>10</X>
+       <Y>55</Y>
+       <Width>100</Width>
+       <Height>10</Height>
+       <Text>anomaly:</Text>
+       <AutoTooltip>suffix for anomaly spot bookmark names</AutoTooltip>
+      </Text>
+      <Textentry name='teAnomalyName'>
+       <X>80</X>
+       <Y>55</Y>
+       <Width>100</Width>
+       <Height>15</Height>
+       <MaxLength>40</MaxLength>
+       <OnLoad>
+        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.AnomalyName}]
+       </OnLoad>
+       <OnChange>
+        if ${This.Text.Length} > 0
+        {
+         Script[EVEBot].VariableScope.Config.Coords:SetAnomalyName[${This.Text}]
+        }
+        else
+        {
+         Script[EVEBot].VariableScope.Config.Coords:SetAnomalyName["Type Name Here"]
+        }
+       </OnChange>
+      </Textentry>
+
+
 <!-- anomalies list -->
       <Text name='Label2'>
        <X>10</X>
@@ -784,14 +742,14 @@
        <X>10</X>
        <Y>85</Y>
        <Width>220</Width>
-       <Height>18</Height>
+       <Height>15</Height>
        <MaxLength>50</MaxLength>
       </TextEntry>
       <button Name='AddAllowedAnomaly' template='EVEskin.Add.Texture'>
        <X>232</X>
-       <Y>86</Y>
-       <Width>16</Width>
-       <Height>16</Height>
+       <Y>85</Y>
+       <Width>15</Width>
+       <Height>15</Height>
        <OnLeftClick>
         if !${Script[EVEBot].VariableScope.Config.AllowedAnomalies.IsListed[${UIElement[tbAddAllowedAnomaly@Labels@EVEBotOptionsTab@EVEBot].Text}]}
          UIElement[AllowedAnomalies@Labels@EVEBotOptionsTab@EVEBot]:AddItem[${UIElement[tbAddAllowedAnomaly@Labels@EVEBotOptionsTab@EVEBot].Text}]
@@ -800,10 +758,10 @@
        </OnLeftClick>
       </button>
       <button Name='RemoveAllowedAnomaly' template='EVEskin.Remove.Texture'>
-       <X>250</X>
-       <Y>86</Y>
-       <Width>16</Width>
-       <Height>16</Height>
+       <X>249</X>
+       <Y>85</Y>
+       <Width>15</Width>
+       <Height>15</Height>
        <OnLeftClick>
         UIElement[AllowedAnomalies@Labels@EVEBotOptionsTab@EVEBot].ItemByText[${UIElement[tbAddAllowedAnomaly@Labels@EVEBotOptionsTab@EVEBot].Text}]:Remove
         Script[EVEBot].VariableScope.Config.AllowedAnomalies:RemoveAllowedAnomaly[${UIElement[tbAddAllowedAnomaly@Labels@EVEBotOptionsTab@EVEBot].Text}]
@@ -1162,7 +1120,7 @@
        <Y>80</Y>
        <Width>100</Width>
        <Height>10</Height>
-       <Text>Page</Text>
+       <Text>page</Text>
        <AutoTooltip>X : Y coordinates of SYSTEM SCANNER page in scanner window</AutoTooltip>
       </Text>
       <Textentry name='ReconnectbuttonX'>
@@ -1404,306 +1362,7 @@
        </OnChange>
       </Textentry>
 
-
-
-
-
-
-
-
-
-      <Text name='AnomalyName'>
-       <X>10</X>
-       <Y>120</Y>
-       <Width>100</Width>
-       <Height>10</Height>
-       <Text>AnomalyNAME</Text>
-       <AutoTooltip>      Anomaly NAME to Do</AutoTooltip>
-      </Text>
-      <Textentry name='AnomalyNameX'>
-       <X>120</X>
-       <Y>120</Y>
-       <Width>370</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.AnomalyName}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetAnomalyName[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetAnomalyName["Type Name Here"]
-        }
-       </OnChange>
-      </Textentry>
-
-
-
-
-
-
-
-
-       <Text name='WarpRange2'>
-       <X>10</X>
-       <Y>140</Y>
-       <Width>100</Width>
-       <Height>10</Height>
-       <Text>WarpRange</Text>
-       <AutoTooltip>      Warp Range to Plex</AutoTooltip>
-      </Text>
-      <Textentry name='WarpRange'>
-       <X>120</X>
-       <Y>140</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.WarpRange}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetWarpRange[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetWarpRange["0"]
-        }
-       </OnChange>
-      </Textentry>
-
-      <checkbox name='cbOrbitAnomaly'>
-       <X>200</X>
-       <Y>140</Y>
-       <Height>20</Height>
-       <Width>100</Width>
-       <Text>Orbiting</Text>
-       <AutoTooltip>   Orbit Center of Anomaly?</AutoTooltip>
-       <OnLoad>
-        if ${Script[EVEBot].VariableScope.Config.Coords.OrbitAnomaly}
-        {
-         This:SetChecked
-        }
-       </OnLoad>
-       <OnLeftClick>
-         Script[EVEBot].VariableScope.Config.Coords:SetOrbitAnomaly[${This.Checked}]
-       </OnLeftClick>
-      </checkbox>
-      <Text name='OrbitDistance2'>
-       <X>265</X>
-       <Y>140</Y>
-       <Width>110</Width>
-       <Height>10</Height>
-       <Text>OrbitDistance</Text>
-       <AutoTooltip>      Orbit Distance in Plex</AutoTooltip>
-      </Text>
-      <Textentry name='OrbitDistance'>
-       <X>375</X>
-       <Y>140</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.OrbitDistance}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetOrbitDistance[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetOrbitDistance["130000"]
-        }
-       </OnChange>
-      </Textentry>
-
-      <checkbox name='cbAmmoReload'>
-       <X>100</X>
-       <Y>100</Y>
-       <Height>20</Height>
-       <Width>100</Width>
-       <Text>AmmoReload</Text>
-       <AutoTooltip>   Relaod ammo from POS?</AutoTooltip>
-       <OnLoad>
-        if ${Script[EVEBot].VariableScope.Config.Coords.AmmoReload}
-        {
-         This:SetChecked
-        }
-       </OnLoad>
-       <OnLeftClick>
-         Script[EVEBot].VariableScope.Config.Coords:SetAmmoReload[${This.Checked}]
-       </OnLeftClick>
-      </checkbox>
-      <Textentry name='AmmoReloadValue'>
-       <X>210</X>
-       <Y>100</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.AmmoReloadValue}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetAmmoReloadValue[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetAmmoReloadValue["1000"]
-        }
-       </OnChange>
-      </Textentry>
-
-      <checkbox name='cbSupport'>
-       <X>5</X>
-       <Y>160</Y>
-       <Height>20</Height>
-       <Width>50</Width>
-       <Text>Support?</Text>
-       <AutoTooltip>   Work As Support</AutoTooltip>
-       <OnLoad>
-        if ${Script[EVEBot].VariableScope.Config.Coords.Support}
-        {
-         This:SetChecked
-        }
-       </OnLoad>
-       <OnLeftClick>
-         Script[EVEBot].VariableScope.Config.Coords:SetSupport[${This.Checked}]
-       </OnLeftClick>
-      </checkbox>
-
-
-      <Textentry name='PilotToSupport'>
-       <X>80</X>
-       <Y>160</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.PilotToSupport}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetPilotToSupport[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetPilotToSupport[""]
-        }
-       </OnChange>
-      </Textentry>
-
-      <checkbox name='Sanctum1'>
-       <X>5</X>
-       <Y>180</Y>
-       <Height>20</Height>
-       <Width>50</Width>
-       <Text>Station</Text>
-       <AutoTooltip>  Do Sanctum With Station</AutoTooltip>
-       <OnLoad>
-        if ${Script[EVEBot].VariableScope.Config.Coords.Sanctum1}
-        {
-         This:SetChecked
-        }
-       </OnLoad>
-       <OnLeftClick>
-         Script[EVEBot].VariableScope.Config.Coords:SetSanctum1[${This.Checked}]
-       </OnLeftClick>
-      </checkbox>
-
-      <checkbox name='Sanctum2'>
-       <X>5</X>
-       <Y>200</Y>
-       <Height>20</Height>
-       <Width>50</Width>
-       <Text>Rings</Text>
-       <AutoTooltip>  Do Sanctum With Rings</AutoTooltip>
-       <OnLoad>
-        if ${Script[EVEBot].VariableScope.Config.Coords.Sanctum2}
-        {
-         This:SetChecked
-        }
-       </OnLoad>
-       <OnLeftClick>
-         Script[EVEBot].VariableScope.Config.Coords:SetSanctum2[${This.Checked}]
-       </OnLeftClick>
-      </checkbox>
-
-      <Text name='WaitBeforeScanText'>
-       <X>100</X>
-       <Y>180</Y>
-       <Width>110</Width>
-       <Height>10</Height>
-       <Text>WaitBeforeScan</Text>
-       <AutoTooltip>      WaitBeforeScan</AutoTooltip>
-      </Text>
-
-      <Textentry name='WaitBeforeScan'>
-       <X>100</X>
-       <Y>200</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.WaitBeforeScan}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetWaitBeforeScan[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetWaitBeforeScan["0"]
-        }
-       </OnChange>
-      </Textentry>
-
-
-
-
-      <Text name='SmartBombText'>
-       <X>220</X>
-       <Y>180</Y>
-       <Width>110</Width>
-       <Height>10</Height>
-       <Text>SmartBomb</Text>
-       <AutoTooltip>      SB activation range</AutoTooltip>
-      </Text>
-
-      <Textentry name='SmartBombRange'>
-       <X>220</X>
-       <Y>200</Y>
-       <Width>80</Width>
-       <Height>18</Height>
-       <MaxLength>40</MaxLength>
-       <OnLoad>
-        This:SetText[${Script[EVEBot].VariableScope.Config.Coords.SmartBombRange}]
-       </OnLoad>
-       <OnChange>
-        if ${This.Text.Length} > 0
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetSmartBombRange[${This.Text}]
-        }
-        else
-        {
-         Script[EVEBot].VariableScope.Config.Coords:SetSmartBombRange["0"]
-        }
-       </OnChange>
-      </Textentry>
-
      </tab>
-;-------------------------TAB COORDS  --= END =-- ---------------------------
-
-
 
      <Tab name='fleeing'>
       <TabControl Name='FleeingTabcontrol' template='EVESkin.TabControl'>
@@ -2011,7 +1670,7 @@
            </checkbox>
            <combobox name='comboBreakDuration'>
             <X>120</X>
-            <Y>170</Y>
+            <Y>172</Y>
             <Width>50</Width>
             <Height>15</Height>
             <FullHeight>200</FullHeight>
@@ -2032,7 +1691,7 @@
            </combobox>
            <combobox name='comboTimeBetweenBreaks'>
             <X>240</X>
-            <Y>170</Y>
+            <Y>172</Y>
             <Width>50</Width>
             <Height>15</Height>
             <FullHeight>200</FullHeight>
@@ -2071,7 +1730,7 @@
            </checkbox>
            <combobox name='comboSafeCooldown'>
             <X>55</X>
-            <Y>150</Y>
+            <Y>152</Y>
             <Width>50</Width>
             <Height>15</Height>
             <FullHeight>200</FullHeight>
@@ -2095,7 +1754,7 @@
            </combobox>
            <combobox name='comboSafeCooldownRandom'>
             <X>177</X>
-            <Y>150</Y>
+            <Y>152</Y>
             <Width>50</Width>
             <Height>15</Height>
             <FullHeight>200</FullHeight>
@@ -2268,8 +1927,8 @@
             </OnLeftClick>
            </checkbox>
            <checkbox name='cbAbandonWrecks'>
-            <X>10</X>
-            <Y>210</Y>
+            <X>345</X>
+            <Y>190</Y>
             <Height>20</Height>
             <Width>100</Width>
             <Text>abandon wrecks</Text>
@@ -2284,7 +1943,209 @@
              Script[EVEBot].VariableScope.Config.Combat:SetAbandonWrecks[${This.Checked}]
             </OnLeftClick>
            </checkbox>
-
+           <checkbox name='cbNavigate'>
+            <X>10</X>
+            <Y>210</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>use                  with distance                  meters at</Text>
+            <AutoTooltip>If checked, bot will orbit or keep at range in anomaly.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.Navigate}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetNavigate[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <combobox name='comboNavigateAction'>
+            <X>52</X>
+            <Y>212</Y>
+            <Width>65</Width>
+            <Height>15</Height>
+            <FullHeight>200</FullHeight>
+            <ButtonWidth>20</ButtonWidth>
+            <Items>
+             <Item Value='orbit'>orbit</Item>
+             <Item Value='range'>range</Item>
+            </Items>
+            <OnSelect>
+             Script[EVEBot].VariableScope.Config.Combat:SetNavigateAction[${This.SelectedItem.Value}]
+            </OnSelect>
+            <OnLoad>
+             This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.NavigateAction}].ID}]
+            </OnLoad>
+           </combobox>
+           <Textentry name='teNavigateDistance'>
+            <X>198</X>
+            <Y>212</Y>
+            <Width>60</Width>
+            <Height>15</Height>
+            <MaxLength>10</MaxLength>
+            <OnLoad>
+             This:SetText[${Script[EVEBot].VariableScope.Config.Combat.NavigateDistance}]
+            </OnLoad>
+            <OnChange>
+             if ${This.Text.Length} > 0
+             {
+              Script[EVEBot].VariableScope.Config.Combat:SetNavigateDistance[${This.Text}]
+             }
+             else
+             {
+              Script[EVEBot].VariableScope.Config.Combat:SetNavigateDistance["5555"]
+             }
+            </OnChange>
+           </Textentry>
+           <combobox name='comboNavigateEntity'>
+            <X>320</X>
+            <Y>212</Y>
+            <Width>90</Width>
+            <Height>15</Height>
+            <FullHeight>200</FullHeight>
+            <ButtonWidth>20</ButtonWidth>
+            <Items>
+             <Item Value='anomaly'>anomaly</Item>
+             <Item Value='target'>target</Item>
+            </Items>
+            <OnSelect>
+             Script[EVEBot].VariableScope.Config.Combat:SetNavigateEntity[${This.SelectedItem.Value}]
+            </OnSelect>
+            <OnLoad>
+             This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.NavigateEntity}].ID}]
+            </OnLoad>
+           </combobox>
+           <checkbox name='cbNavigateMWD'>
+            <X>10</X>
+            <Y>230</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>switch mwd accuracy                  meters</Text>
+            <AutoTooltip>If checked, bot turn off ab/mwd when navigating between range +-accuracy.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.NavigateMWD}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetNavigateMWD[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <Textentry name='teNavigateMWDAccuracy'>
+            <X>150</X>
+            <Y>232</Y>
+            <Width>60</Width>
+            <Height>15</Height>
+            <MaxLength>20</MaxLength>
+            <OnLoad>
+             This:SetText[${Script[EVEBot].VariableScope.Config.Combat.NavigateMWDAccuracy}]
+            </OnLoad>
+            <OnChange>
+             if ${This.Text.Length} > 0
+             {
+              Script[EVEBot].VariableScope.Config.Combat:SetNavigateMWDAccuracy[${This.Text}]
+             }
+             else
+             {
+              Script[EVEBot].VariableScope.Config.Combat:SetNavigateMWDAccuracy["3333"]
+             }
+            </OnChange>
+           </Textentry>
+           <checkbox name='cbAmmoReload'>
+            <X>10</X>
+            <Y>250</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>reload ammo</Text>
+            <AutoTooltip>reload ammo from cha</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Coords.AmmoReload}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Coords:SetAmmoReload[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <Textentry name='teAmmoReloadValue'>
+            <X>100</X>
+            <Y>252</Y>
+            <Width>50</Width>
+            <Height>15</Height>
+            <MaxLength>20</MaxLength>
+            <OnLoad>
+             This:SetText[${Script[EVEBot].VariableScope.Config.Coords.AmmoReloadValue}]
+            </OnLoad>
+            <OnChange>
+             if ${This.Text.Length} > 0
+             {
+              Script[EVEBot].VariableScope.Config.Coords:SetAmmoReloadValue[${This.Text}]
+             }
+             else
+             {
+              Script[EVEBot].VariableScope.Config.Coords:SetAmmoReloadValue["1000"]
+             }
+            </OnChange>
+           </Textentry>
+           <Text name='lbWarpRange'>
+            <X>155</X>
+            <Y>253</Y>
+            <Width>180</Width>
+            <Height>10</Height>
+            <Text>| warp range                 meters</Text>
+            <AutoTooltip>warp range to anomaly</AutoTooltip>
+           </Text>
+           <Textentry name='teWarpRange'>
+            <X>230</X>
+            <Y>252</Y>
+            <Width>60</Width>
+            <Height>15</Height>
+            <MaxLength>10</MaxLength>
+            <OnLoad>
+             This:SetText[${Script[EVEBot].VariableScope.Config.Coords.WarpRange}]
+            </OnLoad>
+            <OnChange>
+             if ${This.Text.Length} > 0
+             {
+              Script[EVEBot].VariableScope.Config.Coords:SetWarpRange[${This.Text}]
+             }
+             else
+             {
+              Script[EVEBot].VariableScope.Config.Coords:SetWarpRange["0"]
+             }
+            </OnChange>
+           </Textentry>
+           <Text name='lbFireRange'>
+            <X>265</X>
+            <Y>233</Y>
+            <Width>180</Width>
+            <Height>10</Height>
+            <Text>| fire range                 meters</Text>
+            <AutoTooltip>bot will stop shooting to save ammo if active target out of range</AutoTooltip>
+           </Text>
+           <Textentry name='teFireRange'>
+            <X>330</X>
+            <Y>232</Y>
+            <Width>60</Width>
+            <Height>15</Height>
+            <MaxLength>10</MaxLength>
+            <OnLoad>
+             This:SetText[${Script[EVEBot].VariableScope.Config.Combat.FireRange}]
+            </OnLoad>
+            <OnChange>
+             if ${This.Text.Length} > 0
+             {
+              Script[EVEBot].VariableScope.Config.Combat:SetFireRange[${This.Text}]
+             }
+             else
+             {
+              Script[EVEBot].VariableScope.Config.Combat:SetWarpRange["222222"]
+             }
+            </OnChange>
+           </Textentry>
           </children>
          </frame>
         </Tab>

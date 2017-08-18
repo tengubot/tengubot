@@ -343,6 +343,7 @@ function ShipDroneList()
   variable index:entity tgtIndex
   variable iterator tgtIterator
   variable index:int64 engageIndex
+  variable index:int64 returnIndex
 
   EVE:QueryEntities[tgtIndex, "GroupID = 549"]
   tgtIndex:GetIterator[tgtIterator]
@@ -350,23 +351,15 @@ function ShipDroneList()
   {
    do
    {
-    if ${tgtIterator.Value.ShieldPct} < 77
+    if ${tgtIterator.Value.ShieldPct} < 88
     {
-     UI:UpdateConsole["fighter under attack, return control"]
-     Mouse:SetPosition[${Config.Coords.RecoverX},${Config.Coords.RecoverY}]
-     wait ${Config.Coords.MouseDelay}
-     Mouse:RightClick
-     wait ${Config.Coords.MouseDelay}
-     Mouse:SetPosition[${Math.Calc[${Config.Coords.RecoverX}+30]}, ${Math.Calc[${Config.Coords.RecoverY}+30]}]
-     wait ${Config.Coords.MouseDelay}
-     Mouse:LeftClick
-     wait ${Config.Coords.MouseDelay}
-     break
+     UI:UpdateConsole["fighter ${tgtIterator.Value.ID} under attack, return control"]
+     returnIndex:Insert[${tgtIterator.Value.ID}]
     }
     engageIndex:Insert[${tgtIterator.Value.ID}]
    }
    while ${tgtIterator:Next(exists)}
-;   EVE:DronesEngageMyTarget[engageIndex]
+   EVE:ReturnFighterControl[returnIndex]
    EVE:Execute[CmdDronesEngage]
   }
  }

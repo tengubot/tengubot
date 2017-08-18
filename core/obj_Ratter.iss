@@ -316,138 +316,106 @@ objectdef obj_Ratter
 
  function CheckAmmo()
  {
-  variable int MyWWW
   variable index:item CargoIndex
+  variable string MyHangar = "Corporate Hangar Array"
+  variable int idx
 
-  Me.Ship:StackAllCargo
-  Me.Ship:GetCargo[CargoIndex]
+  call Safespots.WarpTo
+  wait 10
 
-  if ${Config.Combat.MyOrbitRange} > 2
+  if (!${Entity[${MyHangar}](exists)})
   {
-   MyWWW:Set[5]
+   MyErrMess:Set["WARNING: HANGAR NOT FOUNT - WAR ENDED !"]
+   This.CurrentState:Set["GAMEOVER"]
+   return
   }
-  else
+
+  if (${Entity[${MyHangar}].Distance} > 2000)
   {
-   MyWWW:Set[1500]
-  }
-
-
-  if ${CargoIndex.Get[1].Quantity} > ${MyWWW}
-  {
-   UI:UpdateConsole["Count ammo (${CargoIndex.Get[1].Quantity})"]
-  }
-  else
-  {
-   UI:UpdateConsole["Low count ammo (${CargoIndex.Get[1].Quantity}), to refill", LOG_MINOR]
-
-   variable string MyHangar = "Corporate Hangar Array"
-   variable int idx
-
-   call Safespots.WarpTo
-   wait 10
-
-   if (!${Entity[${MyHangar}](exists)})
-   {
-    MyErrMess:Set["WARNING: HANGAR NOT FOUNT - WAR ENDED !"]
-    This.CurrentState:Set["GAMEOVER"]
-    return
-   }
-
-   if (${Entity[${MyHangar}].Distance} > 2000)
-   {
-    Entity[${MyHangar}]:Approach
-    do
-    {
-     wait 5
-    }
-    while ${Entity[${MyHangar}].Distance} > 2000
-   }
-   EVE:Execute[CmdStopShip]
-   Entity[${MyHangar}]:OpenCargo
-   wait 10
-
-   ;-------------------------------------------------------
-
-   variable int NotCharges
-   variable float MyVolumeCharges
-   variable int MyHangarItemCount
-   variable int MyNeedCharges
-   variable index:item MyHangarItem
-   variable string MyChargesS
-   variable string MyChargesSHungar
-
-
-   Me.Ship:StackAllCargo
-   wait 20
-   Me.Ship:GetCargo[CargoIndex]
-   wait 10
-   MyChargesS:Set[${CargoIndex.Get[1].Name}]
-   wait 10
-   MyVolumeCharges:Set[${Math.Calc[ ${Me.Ship.UsedCargoCapacity}/${CargoIndex.Get[1].Quantity}]}]
-   MyNeedCharges:Set[${Math.Calc[ ${Ship.CargoFreeSpace} / ${MyVolumeCharges} - 1 ]}]
-   MyHangarItemCount:Set[${Entity[${MyHangar}].GetCargo[MyHangarItem]}]
-
-   if ${Config.Combat.MyOrbitRange} > 2
-   {
-    if ${MyNeedCharges} > 50
-    {
-     MyNeedCharges:Set[50]
-    }
-   }
-
-   UI:UpdateConsole["Serching ${MyChargesS} in ${MyHangar}"]
-   NotCharges:Set[0]
-   idx:Set[1]
+   Entity[${MyHangar}]:Approach
    do
    {
-    if ${MyHangarItem.Get[${idx}].CategoryID} == 8
-    {
-     MyChargesSHungar:Set[${MyHangarItem.Get[${idx}].Name}]
-     if ${MyChargesS.Equal[${MyChargesSHungar}]}
-     {
-      variable int MyNeedChargesOld
-      MyNeedChargesOld:Set[${MyNeedCharges}]
-      if ${MyHangarItem.Get[${idx}].Quantity} > ${MyNeedCharges}
-      {
-       UI:UpdateConsole["FOUND: getting ${MyNeedCharges} in my cargo"]
-       MyHangarItem.Get[${idx}]:MoveTo[MyShip,${MyNeedCharges}]
-       wait 10
-       idx:Set[${MyHangarItemCount}]
-      }
-      else
-      {
-       UI:UpdateConsole["FOUND: low charges - getting ${MyHangarItem.Get[${idx}].Quantity} in my cargo"]
-       MyHangarItem.Get[${idx}]:MoveTo[MyShip,${MyHangarItem.Get[${idx}].Quantity}]
-       wait 10
-       MyNeedCharges:Set[ ${Math.Calc[${MyNeedChargesOld}-${MyHangarItem.Get[${idx}].Quantity} ]}]
-      }
-      NotCharges:Set[1]
-      wait 5
-      Me.Ship:StackAllCargo
-      if ${MyNeedCharges} == 0
-      {
-       idx:Set[${Math[${MyHangarItemCount}+1]}]
-      }
-     }
-     wait 10
-    }
+    wait 5
    }
-   while ${idx:Inc} <= ${MyHangarItemCount}
+   while ${Entity[${MyHangar}].Distance} > 2000
+  }
+  EVE:Execute[CmdStopShip]
+  Entity[${MyHangar}]:OpenCargo
+  wait 10
 
-   if ${NotCharges} == 0
+  ;-------------------------------------------------------
+
+  variable int NotCharges
+  variable float MyVolumeCharges
+  variable int MyHangarItemCount
+  variable int MyNeedCharges
+  variable index:item MyHangarItem
+  variable string MyChargesS
+  variable string MyChargesSHungar
+
+
+  Me.Ship:StackAllCargo
+  wait 20
+  Me.Ship:GetCargo[CargoIndex]
+  wait 10
+  MyChargesS:Set[${CargoIndex.Get[1].Name}]
+  wait 10
+  MyVolumeCharges:Set[${Math.Calc[ ${Me.Ship.UsedCargoCapacity}/${CargoIndex.Get[1].Quantity}]}]
+  MyNeedCharges:Set[${Math.Calc[ ${Ship.CargoFreeSpace} / ${MyVolumeCharges} - 1 ]}]
+  MyHangarItemCount:Set[${Entity[${MyHangar}].GetCargo[MyHangarItem]}]
+
+  UI:UpdateConsole["Searching ${MyChargesS} in ${MyHangar}"]
+  NotCharges:Set[0]
+  idx:Set[1]
+  do
+  {
+   if ${MyHangarItem.Get[${idx}].CategoryID} == 8
    {
-    MyErrMess:Set["WARNING: AMMO NOT FOUNT - WAR ENDED !"]
-    This.CurrentState:Set["GAMEOVER", LOG_MINOR]
-    call This.MyQuitGames
+    MyChargesSHungar:Set[${MyHangarItem.Get[${idx}].Name}]
+    if ${MyChargesS.Equal[${MyChargesSHungar}]}
+    {
+     variable int MyNeedChargesOld
+     MyNeedChargesOld:Set[${MyNeedCharges}]
+     if ${MyHangarItem.Get[${idx}].Quantity} > ${MyNeedCharges}
+     {
+      UI:UpdateConsole["FOUND: getting ${MyNeedCharges} in my cargo"]
+      MyHangarItem.Get[${idx}]:MoveTo[MyShip,${MyNeedCharges}]
+      wait 10
+      idx:Set[${MyHangarItemCount}]
+     }
+     else
+     {
+      UI:UpdateConsole["FOUND: low charges - getting ${MyHangarItem.Get[${idx}].Quantity} in my cargo"]
+      MyHangarItem.Get[${idx}]:MoveTo[MyShip,${MyHangarItem.Get[${idx}].Quantity}]
+      wait 10
+      MyNeedCharges:Set[ ${Math.Calc[${MyNeedChargesOld}-${MyHangarItem.Get[${idx}].Quantity} ]}]
+     }
+     NotCharges:Set[1]
+     wait 5
+     Me.Ship:StackAllCargo
+     if ${MyNeedCharges} == 0
+     {
+      idx:Set[${Math[${MyHangarItemCount}+1]}]
+     }
+    }
+    wait 10
    }
-    else
-   {
-    wait 10
-    Me.Ship:StackAllCargo
-    wait 10
-    Entity[${MyHangar}]:CloseCargo
-    wait 10
-   }
+  }
+  while ${idx:Inc} <= ${MyHangarItemCount}
+
+  if ${NotCharges} == 0
+  {
+   MyErrMess:Set["WARNING: AMMO NOT FOUNT - WAR ENDED !"]
+   This.CurrentState:Set["GAMEOVER", LOG_MINOR]
+   call This.MyQuitGames
+  }
+   else
+  {
+   wait 10
+   Me.Ship:StackAllCargo
+   wait 10
+   Entity[${MyHangar}]:CloseCargo
+   wait 10
   }
  }
 

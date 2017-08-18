@@ -13,13 +13,15 @@ objectdef obj_Combat
  variable time NextPulse
  variable int PulseIntervalInSeconds = 1
 
- variable bool   Override
+ variable bool Override
  variable string CombatMode
  variable string CurrentState
- variable bool   Fled
- variable bool   ResetTarget
- variable bool   PlayWarnSound
- variable bool   docking_in_progress = FALSE
+ variable bool Fled
+ variable bool ResetTarget
+ variable bool PlayWarnSound
+ variable bool docking_in_progress = FALSE
+ variable int last_orbit_time = 0
+ variable int last_active_target = 0
 
  method Initialize()
  {
@@ -52,7 +54,7 @@ objectdef obj_Combat
    This.NextPulse.Second:Inc[${This.PulseIntervalInSeconds}]
    This.NextPulse:Update
 
-   if (!${Me.ToEntity.IsWarpScrambled} && !${Social.IsPlayerMeTarget} && !${Targets.PCWar} && !${This.docking_in_progress})
+   if (!${Me.ToEntity.IsWarpScrambled} && !${Social.IsPlayerMeTarget} && !${Targets.PCWar} && !${This.docking_in_progress} && !${Station.Docked} && !${Station.InProgress})
    {
     if ${Config.Combat.GameOverShield}
     {
@@ -212,9 +214,13 @@ objectdef obj_Combat
  function Fight()
  {
   Ship:Deactivate_Cloak
-  while ${Ship.IsCloaked}
+  while ${Count:Inc} < 10 && ${Ship.IsCloaked}
   {
-   waitframe
+   wait 5
+  }
+  if ${Ship.IsCloaked}
+  {
+   UI:UpdateConsole["Error: Ship.IsCloaked still true after 5 seconds", LOG_CRITICAL]
   }
   ;Ship:Offline_Cloak
   ;Ship:Online_Salvager
@@ -222,10 +228,43 @@ objectdef obj_Combat
   ; Reload the weapons -if- ammo is below 30% and they arent firing
   Ship:Reload_Weapons[FALSE]
 
+  if ${Config.Combat.Navigate}
+  {
+   switch ${Config.Combat.NavigateEntity}
+   {
+    case anomaly
+     if ${Entity["TypeID = 28356"].ID(exists)}
+     {
+      Ship:Navigate[${Entity["TypeID = 28356"]}, ${Config.Combat.NavigateAction}, ${Config.Combat.NavigateDistance}, ${Config.Combat.NavigateMWDAccuracy}, ${Config.Combat.NavigateMWD}]
+     }
+     else
+     {
+      UI:UpdateConsole["cannot navigate: anomaly beacon not found"]
+     }
+     break
+    case target
+     if ${Me.ActiveTarget.ID(exists)}
+     {
+      Ship:Navigate[${Me.ActiveTarget}, ${Config.Combat.NavigateAction}, ${Config.Combat.NavigateDistance}, ${Config.Combat.NavigateMWDAccuracy}, ${Config.Combat.NavigateMWD}]
+     }
+     else
+     {
+      UI:UpdateConsole["cannot navigate: active target not found"]
+     }
+     break
+    default
+     UI:UpdateConsole["cannot navigate: unknown navigate entity"]
+     break
+   }
+  }
+
   ; Activate the weapons, the modules class checks if there's a target (no it doesn't - ct)
   Ship:Activate_StasisWebs
   Ship:Activate_TargetPainters
-  Ship:Activate_Weapons
+  if ${Config.Combat.FireRange} >= ${Me.ActiveTarget.Distance}
+   Ship:Activate_Weapons
+  else
+   Ship:Deactivate_Weapons
   if ${Targets.HaveAllAggro} && ${Config.Combat.LaunchCombatDrones} && !${Ship.InWarp}
   {
    Ship.Drones:LaunchAll[]
@@ -251,6 +290,7 @@ objectdef obj_Combat
  {
   This.Fled:Set[TRUE]
   This.PlayWarnSound:Set[FALSE]
+  Ship:Deactivate_AfterBurner
 
   if ${Config.Combat.RunToStation}
   {
@@ -528,10 +568,10 @@ objectdef obj_Combat
      wait 50
     }
     UI:UpdateConsole["closing inventory windows"]
-    while ${EVEWindow[ByName,"Inventory"](exists)}
+    while ${EVEWindow[ByCaption,"Inventory"](exists)}
     {
-     UI:UpdateConsole["closing inventory ${EVEWindow[ByName,"Inventory"].ItemID} c ${EVEWindow[ByName,"Inventory"].Caption} n ${EVEWindow[ByName,"Inventory"].Name}"]
-     EVEWindow[ByName,"Inventory"]:Close
+     UI:UpdateConsole["closing inventory ${EVEWindow[ByCaption,"Inventory"].ItemID} c ${EVEWindow[ByCaption,"Inventory"].Caption} n ${EVEWindow[ByCaption,"Inventory"].Name}"]
+     EVEWindow[ByCaption,"Inventory"]:Close
      wait 10
     }
     variable int X=${Config.Coords.1stProbeX}
@@ -554,10 +594,10 @@ objectdef obj_Combat
     wait ${Config.Coords.MouseDelay}
     UI:UpdateConsole["ship stored, closing inventory windows"]
     wait 50
-    while ${EVEWindow[ByName,"Inventory"](exists)}
+    while ${EVEWindow[ByCaption,"Inventory"](exists)}
     {
-     UI:UpdateConsole["closing inventory ${EVEWindow[ByName,"Inventory"].ItemID} c ${EVEWindow[ByName,"Inventory"].Caption} n ${EVEWindow[ByName,"Inventory"].Name}"]
-     EVEWindow[ByName,"Inventory"]:Close
+     UI:UpdateConsole["closing inventory ${EVEWindow[ByCaption,"Inventory"].ItemID} c ${EVEWindow[ByCaption,"Inventory"].Caption} n ${EVEWindow[ByCaption,"Inventory"].Name}"]
+     EVEWindow[ByCaption,"Inventory"]:Close
      wait 10
     }
    }

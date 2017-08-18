@@ -48,6 +48,8 @@ objectdef obj_Ship
  variable string m_Type
  variable int m_TypeID
  variable uint ReloadingWeapons = 0
+ variable int last_navigate_time = 0
+ variable int64 last_navigate_target = 0
 
  variable iterator ModulesIterator
 
@@ -262,6 +264,20 @@ objectdef obj_Ship
    return ${Me.Ship.CargoCapacity}
   }
   return ${Math.Calc[${Me.Ship.CargoCapacity}-${Me.Ship.UsedCargoCapacity}]}
+ }
+
+ member:float CargoUsedSpace()
+ {
+  if !${Me.Ship(exists)}
+  {
+   return 0
+  }
+
+  if ${Me.Ship.UsedCargoCapacity} < 0
+  {
+   return ${Me.Ship.CargoCapacity}
+  }
+  return ${Me.Ship.UsedCargoCapacity}
  }
 
  member:bool CargoFull()
@@ -820,11 +836,11 @@ objectdef obj_Ship
   {
    if ${fullName}
         {
-          return ${Me.Ship.Module[${SlotName}].Charge.Name}
+          return ${Me.Ship.Module[${SlotName}].Charge.Type}
         }
         else
         {
-          return ${Me.Ship.Module[${SlotName}].Charge.Name.Token[1, " "]}
+          return ${Me.Ship.Module[${SlotName}].Charge.Type.Token[1, " "]}
 
         }
   }
@@ -843,8 +859,8 @@ objectdef obj_Ship
    if ${ModuleIter.Value.ToItem.Slot.Equal[${SlotName}]} && \
     ${ModuleIter.Value.Charge(exists)}
    {
-    ;UI:UpdateConsole["DEBUG: obj_Ship:LoadedMiningLaserCrystal Returning ${ModuleIter.Value.Charge.Name.Token[1, " "]}]
-    return ${ModuleIter.Value.Charge.Name.Token[1, " "]}
+    ;UI:UpdateConsole["DEBUG: obj_Ship:LoadedMiningLaserCrystal Returning ${ModuleIter.Value.Charge.Type.Token[1, " "]}]
+    return ${ModuleIter.Value.Charge.Type.Token[1, " "]}
    }
   }
   while ${ModuleIter:Next(exists)}
@@ -877,6 +893,58 @@ objectdef obj_Ship
 
   return FALSE
  }
+
+ member:bool IsTractoringWreckID(int64 EntityID)
+ {
+  if !${Me.Ship(exists)}
+  {
+   return
+  }
+
+  variable iterator ModuleIter
+
+  This.ModuleList_TractorBeams:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if ${ModuleIter.Value.LastTarget(exists)} && \
+    ${ModuleIter.Value.LastTarget.ID.Equal[${EntityID}]} && \
+    ( ${ModuleIter.Value.IsActive} || ${ModuleIter.Value.IsGoingOnline} )
+   {
+    return TRUE
+   }
+  }
+  while ${ModuleIter:Next(exists)}
+
+  return FALSE
+ }
+
+ member:bool IsSalvagingWreckID(int64 EntityID)
+ {
+  if !${Me.Ship(exists)}
+  {
+   return
+  }
+
+  variable iterator ModuleIter
+
+  This.ModuleList_Salvagers:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if ${ModuleIter.Value.LastTarget(exists)} && \
+    ${ModuleIter.Value.LastTarget.ID.Equal[${EntityID}]} && \
+    ( ${ModuleIter.Value.IsActive} || ${ModuleIter.Value.IsGoingOnline} )
+   {
+    return TRUE
+   }
+  }
+  while ${ModuleIter:Next(exists)}
+
+  return FALSE
+ }
+
+
 
  method UnlockAllTargets()
  {
@@ -1150,6 +1218,122 @@ objectdef obj_Ship
   while ${ModuleIter:Next(exists)}
  }
 
+ function ActivateFreeTractorBeam(int64 id=-1)
+ {
+  variable string Slot
+
+  if !${Me.Ship(exists)}
+  {
+   return
+  }
+  if ${id.Equal[-1]}
+  {
+   id:Set[${Me.ActiveTarget.ID}]
+  }
+  if !${Entity[${id}](exists)}
+  {
+   UI:UpdateConsole["ActivateFreeTractorBeam: Target ${id} not found", LOG_DEBUG]
+   return
+  }
+
+  variable iterator ModuleIter
+
+  This.ModuleList_TractorBeams:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if !${ModuleIter.Value.IsActive} && \
+    !${ModuleIter.Value.IsGoingOnline} && \
+    !${ModuleIter.Value.IsDeactivating} && \
+    !${ModuleIter.Value.IsChangingAmmo} &&\
+    !${ModuleIter.Value.IsReloadingAmmo}
+   {
+    Slot:Set[${ModuleIter.Value.ToItem.Slot}]
+
+    UI:UpdateConsole["Activating: ${Slot}: ${ModuleIter.Value.ToItem.Name}"]
+    ModuleIter.Value:Activate[${id}]
+    wait 25 ${ModuleIter.Value.IsGoingOnline}
+    return
+   }
+  }
+  while ${ModuleIter:Next(exists)}
+ }
+
+ function ActivateFreeShieldTransporter(int64 id=-1)
+ {
+  variable string Slot
+
+  if !${Me.Ship(exists)}
+  {
+   return
+  }
+  if ${id.Equal[-1]}
+  {
+   id:Set[${Me.ActiveTarget.ID}]
+  }
+  if !${Entity[${id}](exists)}
+  {
+   UI:UpdateConsole["ActivateFreeShieldTransporter: Target ${id} not found", LOG_DEBUG]
+   return
+  }
+
+  variable iterator ModuleIter
+
+  This.ModuleList_ShieldTransporters:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if !${ModuleIter.Value.IsActive} && \
+    !${ModuleIter.Value.IsGoingOnline} && \
+    !${ModuleIter.Value.IsDeactivating} && \
+    !${ModuleIter.Value.IsChangingAmmo} &&\
+    !${ModuleIter.Value.IsReloadingAmmo}
+   {
+    Slot:Set[${ModuleIter.Value.ToItem.Slot}]
+
+    UI:UpdateConsole["Activating: ${Slot}: ${ModuleIter.Value.ToItem.Name}"]
+    ModuleIter.Value:Activate[${id}]
+    wait 25 ${ModuleIter.Value.IsGoingOnline}
+    return
+   }
+  }
+  while ${ModuleIter:Next(exists)}
+ }
+
+ function ActivateFreeSalvager()
+ {
+  variable string Slot
+
+  if !${Me.Ship(exists)}
+  {
+   return
+  }
+
+  variable iterator ModuleIter
+
+  This.ModuleList_Salvagers:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if !${ModuleIter.Value.IsActive} && \
+    !${ModuleIter.Value.IsGoingOnline} && \
+    !${ModuleIter.Value.IsDeactivating} && \
+    !${ModuleIter.Value.IsChangingAmmo} &&\
+    !${ModuleIter.Value.IsReloadingAmmo}
+   {
+    Slot:Set[${ModuleIter.Value.ToItem.Slot}]
+
+    UI:UpdateConsole["Activating: ${Slot}: ${ModuleIter.Value.ToItem.Name}"]
+    ModuleIter.Value:Click
+    wait 25
+    return
+   }
+   wait 10
+  }
+  while ${ModuleIter:Next(exists)}
+ }
+
+
  method StopShip()
  {
   EVE:Execute[CmdStopShip]
@@ -1249,7 +1433,7 @@ objectdef obj_Ship
   if ${This.IsCargoOpen}
   {
    UI:UpdateConsole["Closing Ship Cargohold"]
-   EVEWindow[ByName,"Inventory"]:Close
+   EVEWindow[ByCaption,"Inventory"]:Close
    wait WAIT_CARGO_WINDOW
    while ${This.IsCargoOpen}
    {
@@ -1561,7 +1745,9 @@ objectdef obj_Ship
   {
    This:Deactivate_Cloak[]
   }
-  ;This:Deactivate_SensorBoost
+  This.Drones:ReturnAllToDroneBay
+  This:Deactivate_SensorBoost
+  This:Deactivate_AfterBurner
 
   if ${This.Drones.WaitingForDrones}
   {
@@ -1631,7 +1817,6 @@ objectdef obj_Ship
   {
    This:Activate_Cloak[]
   }
-
   while ${This.InWarp}
   {
    Warped:Set[TRUE]
@@ -2240,7 +2425,7 @@ objectdef obj_Ship
  {
   if ${This.IsCargoOpen}
   {
-   EVEWindow[ByItemID,${MyShip.ID}]:StackAll
+   EVEWindow[ByItemID, ${MyShip.ID}]:StackAll
   }
  }
 
@@ -2347,6 +2532,28 @@ objectdef obj_Ship
    if !${ModuleIter.Value.IsActive} && ${ModuleIter.Value.IsOnline}
    {
     UI:UpdateConsole["Activating ${ModuleIter.Value.ToItem.Name}"]
+    ModuleIter.Value:Activate
+   }
+  }
+  while ${ModuleIter:Next(exists)}
+ }
+
+ method Deactivate_Tractor()
+ {
+  if !${Me.Ship(exists)}
+  {
+   return
+  }
+
+  variable iterator ModuleIter
+
+  This.ModuleList_TractorBeams:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if ${ModuleIter.Value.IsActive} && ${ModuleIter.Value.IsOnline} && !${ModuleIter.Value.IsDeactivating}
+   {
+    UI:UpdateConsole["Deactivating ${ModuleIter.Value.ToItem.Name}", LOG_MINOR]
     ModuleIter.Value:Click
    }
   }
@@ -2551,9 +2758,9 @@ objectdef obj_Ship
     {
      do
      {
-      if ${hsIterator.Value.GivenName.Equal[${name}]}
+      if ${hsIterator.Value.Name.Equal[${name}]}
       {
-       UI:UpdateConsole["obj_Ship: Switching to ship named ${hsIterator.Value.GivenName}."]
+       UI:UpdateConsole["obj_Ship: Switching to ship named ${hsIterator.Value.Name}."]
        hsIterator.Value:MakeActive
        break
       }
@@ -2563,4 +2770,63 @@ objectdef obj_Ship
    }
   }
  }
+;---------------------------------------------------------------------------
+ method Navigate(entity target, string action, int range, int accuracy, bool smwd)
+ {
+  variable bool need_action = FALSE
+
+  if !${smwd}
+  {
+   This:Activate_AfterBurner
+  }
+  if !${last_navigate_target.Hex.Equal[${target.ID.Hex}]}
+  {
+   need_action:Set[TRUE]
+   last_navigate_target:Set[${target.ID}]
+   last_navigate_time:Set[0];
+;   UI:UpdateConsole["active target changed to ${target.Name}, trying to ${action} at ${range}"]
+  }
+  if ( \
+   ${Math.Calc[${range}+${accuracy}]} < ${target.Distance} || \
+   ${Math.Calc[${range}-${accuracy}]} > ${target.Distance} \
+  )
+  {
+   if ${smwd}
+   {
+    This:Activate_AfterBurner
+   }
+   need_action:Set[TRUE]
+;   UI:UpdateConsole["wrong distance ${target.Distance}, trying to ${action} ${target.Name} at ${range}"]
+  }
+  else
+  {
+   if ${smwd}
+   {
+    This:Deactivate_AfterBurner
+   }
+  }
+  if ${Me.ToEntity.Mode} != 4 && ${action.Equal["orbit"]}
+  {
+   need_action:Set[TRUE]
+;   UI:UpdateConsole["start orbiting ${target.Name} at ${range}"]
+  }
+  if ${need_action} && ${Time.Timestamp} > ${Math.Calc[${last_navigate_time}+60]}
+  {
+   UI:UpdateConsole["navigate ${target.Name} to ${action} at ${range}"]
+   switch ${action}
+   {
+    case orbit
+     target:Orbit[${range}]
+     break
+    case range
+     target:KeepAtRange[${range}]
+     break
+    default
+     UI:UpdateConsole["cannot navigate: unknown action ${action}"]
+     break
+   }
+   last_navigate_time:Set[${Time.Timestamp}];
+  }
+ }
+;---------------------------------------------------------------------------
 }

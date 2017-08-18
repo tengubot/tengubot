@@ -42,10 +42,10 @@ objectdef obj_Ratter
   if ${ModuleIter:First(exists)}
   do
   {
-   if ${ModuleIter.Value.ToItem.Slot.Left[6].Equal[HiSlot]} == TRUE && ${ModuleIter.Value.Charge.Volume} != NULL && ${ModuleIter.Value.Charge.Name.Equal[NULL]} == FALSE
+   if ${ModuleIter.Value.ToItem.Slot.Left[6].Equal[HiSlot]} == TRUE && ${ModuleIter.Value.Charge.Volume} != NULL && ${ModuleIter.Value.Charge.Type.Equal[NULL]} == FALSE
    {
     MyVolumeCharges:Set[${ModuleIter.Value.Charge.Volume}]
-    MyChargesS:Set[${ModuleIter.Value.Charge.Name}]
+    MyChargesS:Set[${ModuleIter.Value.Charge.Type}]
     break
    }
   }
@@ -174,26 +174,16 @@ objectdef obj_Ratter
     call This.CheckAmmo
    }
 
-
-   if ${Config.Coords.Support}
+   echo ScaNNEr
+   Ship:Deactivate_Weapons
+   Ship:Deactivate_Tracking_Computer
+   Ship:Deactivate_ECCM
+   Ship:Reload_Weapons[TRUE]
+   if ${Me.ToEntity.IsWarpScrambled}
    {
-   ;echo SUPPORT!
-    call This.WarpToPilot
-    return
+    Ship:Activate_SmartBomb
    }
-   else
-   {
-    echo ScaNNEr
-    Ship:Deactivate_Weapons
-    Ship:Deactivate_Tracking_Computer
-    Ship:Deactivate_ECCM
-    Ship:Reload_Weapons[TRUE]
-    if ${Me.ToEntity.IsWarpScrambled}
-    {
-     Ship:Activate_SmartBomb
-    }
-    call This.Scanner
-   }
+   call This.Scanner
    Targets:ResetTargets
   }
   ; Wait for the rats to warp into the belt. Reports are between 10 and 20 seconds.
@@ -251,16 +241,16 @@ objectdef obj_Ratter
    Ship.Drones:SendDrones
   }
 
-  if ${Config.Coords.OrbitAnomaly}
+;  if ${Config.Coords.OrbitAnomaly}
 ;&& !${This.Social.GankWereHere}
-  {
-   call This.OrbitCenterOfAnomaly ${Config.Coords.OrbitDistance}
-  }
+;  {
+;   call This.OrbitCenterOfAnomaly ${Config.Coords.OrbitDistance}
+;  }
 
-  if ${Config.Coords.Support}
-  {
-   call This.WarpToPilot
-  }
+;  if ${Config.Coords.Support}
+;  {
+;   call This.WarpToPilot
+;  }
 
   if ${Targets.TargetNPCs}
   {
@@ -268,14 +258,14 @@ objectdef obj_Ratter
    ;UI:UpdateConsole["NPC: ${NPCName}(${NPCShipType}) ${EVEBot.ISK_To_Str[${EVEDB_Spawns.SpawnBounty[${NPCName}]}]}"]
    ;UI:UpdateConsole[" ${Me.Targets} distance ${NPC.Value.Distance}"]
    ; ToEntity.Distance
-   if ${Me.ToEntity.IsWarpScrambled} || (${Me.ActiveTarget(exists)} && ${Me.ActiveTarget.Distance} < ${Config.Coords.SmartBombRange})
-   {
-    Ship:Activate_SmartBomb
-   }
-   else
-   {
-    Ship:Deactivate_SmartBomb
-   }
+;   if ${Me.ToEntity.IsWarpScrambled} || (${Me.ActiveTarget(exists)} && ${Me.ActiveTarget.Distance} < ${Config.Coords.SmartBombRange})
+;   {
+;    Ship:Activate_SmartBomb
+;   }
+;   else
+;   {
+;    Ship:Deactivate_SmartBomb
+;   }
    ;если нас скрамбят и есть приорити таргет, то это 100% скрамбит нпс в рейндже смарты.  Так что можно отследить и врубить смарту без лока цели.
    ;echo prioryty present ? - ${Targets.PriorityTargetPresent} scrambled? - ${Me.ToEntity.IsWarpScrambled}
    ;UI:UpdateConsole["prioryty present ? - ${Targets.PriorityTargetPresent} scrambled? - ${Me.ToEntity.IsWarpScrambled}"]
@@ -288,25 +278,6 @@ objectdef obj_Ratter
     return
    }
 
-   ;--------------------------------------------------
-   if ${Config.Coords.AnomalyName.Right[7].Equal[Sanctum]} == TRUE
-   {
-    if ${Config.Coords.Sanctum1} == TRUE && ${Entity["complex"].ID(exists)}
-    {
-    }
-    else
-    {
-     if (${Config.Coords.Sanctum2} == TRUE) && !${Entity["complex"].ID(exists)}
-     {
-     }
-     else
-     {
-      call This.AnomalyBookmark
-      This.CurrentState:Set["MOVE"]
-      return
-     }
-    }
-   }
    if ${Social.IsSafe}
    {
     call Combat.ManageTank
@@ -317,7 +288,8 @@ objectdef obj_Ratter
   }
 
 ; COMPLEX - AGGRO
-  if ${Entity["Pirate Complex"].ID(exists)} && !${Config.Coords.Support}
+  if ${Entity["Pirate Complex"].ID(exists)}
+;   && !${Config.Coords.Support}
   {
    if ${Social.IsSafe}
    {
@@ -335,7 +307,8 @@ objectdef obj_Ratter
   }
 
 ; BUNKER - AGGRO
-  if ${Entity["Bunker"].Name(exists)} && !${Config.Coords.Support}
+  if ${Entity["Bunker"].Name(exists)}
+;   && !${Config.Coords.Support}
   {
    if ${Social.IsSafe}
    {
@@ -376,7 +349,8 @@ objectdef obj_Ratter
 
 ; GHOST COLONY - AGGRO
 
-  if ${Entity["Ghost Colony"].ID(exists)} && !${Config.Coords.Support}
+  if ${Entity["Ghost Colony"].ID(exists)}
+;   && !${Config.Coords.Support}
   {
    if ${Social.IsSafe}
    {
@@ -408,6 +382,7 @@ objectdef obj_Ratter
   if ${Entity["TypeID = 28356"].ID(exists)}
   {
    UI:UpdateConsole["Waiting stupid rats at 30 seconds."]
+   EVE:Execute[CmdStopShip]
    for (waitinplex:Set[6] ; ${waitinplex}>=1 ; waitinplex:Dec)
    {
     if ${Targets.NPC}
@@ -424,7 +399,8 @@ objectdef obj_Ratter
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  if ${Entity["Drone Structure I"].ID(exists)} && !${Config.Coords.Support}
+  if ${Entity["Drone Structure I"].ID(exists)}
+;   && !${Config.Coords.Support}
   {
    if ${Social.IsSafe}
    {
@@ -483,7 +459,8 @@ objectdef obj_Ratter
 
 ; WRECK - SQUADCOMM
 
-  if ${Entity["Wreck"].ID(exists)} && !${Config.Coords.Support}
+  if ${Entity["Wreck"].ID(exists)}
+;   && !${Config.Coords.Support}
   {
    variable index:fleetmember FMembers
    variable iterator FMember
@@ -517,25 +494,72 @@ objectdef obj_Ratter
 
 ; NOSUPPORT - SCAN
 
-  if !${Config.Coords.Support}
+  if ${Config.Combat.AbandonWrecks}
   {
-   if ${Config.Combat.AbandonWrecks}
-   {
-    UI:UpdateConsole["abandoning wrecks"]
-    Entity["GroupID = 186"]:AbandonAll
-   }
-
-   UI:UpdateConsole["Flying to next anomaly."]
-
-; for inventory debug only
-;   if ${Config.Coords.AmmoReload}
-;   {
-;    call This.CheckAmmo
-;   }
-
-   call This.AnomalyBookmark
-   return
+   UI:UpdateConsole["abandoning wrecks"]
+   Entity["GroupID = 186"]:AbandonAll
+   wait 100
+   Entity["GroupID = 12"]:AbandonAll
   }
+
+  if ${Config.Labels.ScavengePrefix.Length} > 0
+  {
+   variable index:entity tgtIndex
+   variable iterator tgtIterator
+   variable int counter = 0
+   variable float64 summ = 0
+   variable int64 bestchoice = 0
+   variable float64 bestchoicedist = 0
+   EVE:QueryEntities[tgtIndex, "GroupID = 186 || GroupID = 12"]
+   tgtIndex:GetIterator[tgtIterator]
+   if ${tgtIterator:First(exists)} && !${This.AnotherPlayerIsHere[FALSE]}
+   {
+    UI:UpdateConsole["some wreck found, creating bm for scavenger."]
+    counter:Set[0]
+    summ:Set[0]
+    bestchoice:Set[0]
+    bestchoicedist:Set[999999]
+    do
+    {
+     counter:Inc
+     summ:Inc[${tgtIterator.Value.Distance}]
+    }
+    while ${tgtIterator:Next(exists)}
+    summ:Set[${summ}/${counter}]
+;    UI:UpdateConsole["average dist is ${summ.Precision[2]}"]
+    if ${tgtIterator:First(exists)}
+    do
+    {
+     if ${Math.Abs[${tgtIterator.Value.Distance}-${summ}]} < ${bestchoicedist}
+     {
+      bestchoice:Set[${tgtIterator.Value.ID}]
+      bestchoicedist:Set[${Math.Abs[${tgtIterator.Value.Distance}-${summ}]}]
+     }
+;     UI:UpdateConsole["curdist ${tgtIterator.Value.Distance.Precision[0]} bestdist ${bestchoicedist.Precision[0]}"]
+    }
+    while ${tgtIterator:Next(exists)}
+    Entity[${bestchoice}]:CreateBookmark[ \
+     ${Config.Labels.ScavengePrefix} \
+     ${EVETime.Date}-${EVETime.Time.Token[1, :]}:${EVETime.Time.Token[2, :]}, \
+     "", "Corporation Locations" \
+    ]
+   }
+   else
+   {
+    UI:UpdateConsole["no wrecks found, dont want create bm for scavenger."]
+   }
+  }
+
+  UI:UpdateConsole["Flying to next anomaly."]
+
+;--- for inventory debug only
+;  if ${Config.Coords.AmmoReload}
+;  {
+;   call This.CheckAmmo
+;  }
+
+  call This.AnomalyBookmark
+  return
  }
 
 function Scanner()
@@ -563,7 +587,6 @@ function Scanner()
 ;варп на спот перед тем как сканить . а то еще найдут и епнут....
  if ${Social.IsSafe}
  {
-  wait ${Config.Coords.WaitBeforeScan}
   variable int v
   Mouse:SetPosition[${Config.Coords.ReConX},${Config.Coords.ReConY}]
   wait ${Config.Coords.MouseDelay}
@@ -1050,7 +1073,7 @@ function CheckAmmo()
   wait 10
   EVE:Execute[OpenInventory]
   wait 10
-  EVEWindow[ByName,"Inventory"]:MakeChildActive[${Entity["TypeID = 17621"]}, Folder1]
+  EVEWindow["Inventory"].ChildWindow[${Entity["TypeID = 17621"]}]:MakeActive
   wait 10
 
   variable bool NoCharges
@@ -1141,7 +1164,7 @@ function CheckAmmo()
   else
   {
    wait 30
-   EVEWindow[ByName,"Inventory"]:MakeChildActive[${MyShip.ID}, CargoHold]
+   EVEWindow["Inventory"].ChildWindow[${MyShip.ID},ShipCargo]:MakeActive
    wait 10
    EVEWindow[ByItemID,${MyShip.ID}]:StackAll
    wait 10
@@ -1156,17 +1179,17 @@ function CheckAmmo()
 function CloseInventory()
 {
  UI:UpdateConsole["CloseInventory()"]
- while ${EVEWindow[ByName,"Inventory"](exists)}
+ while ${EVEWindow[ByCaption,"Inventory"](exists)}
  {
-  UI:UpdateConsole["closing inventory ${EVEWindow[ByName,"Inventory"].ItemID} c ${EVEWindow[ByName,"Inventory"].Caption} n ${EVEWindow[ByName,"Inventory"].Name}"]
-  EVEWindow[ByName,"Inventory"]:Close
+  UI:UpdateConsole["closing inventory ${EVEWindow[ByCaption,"Inventory"].ItemID} c ${EVEWindow[ByCaption,"Inventory"].Caption} n ${EVEWindow[ByCaption,"Inventory"].Name}"]
+  EVEWindow[ByCaption,"Inventory"]:Close
   wait 10
  }
  EVEWindow[ByItemID,${MyShip.ID}]:Close
  wait 10
 }
 ;========================================================================================================================================================================
-member:bool AnotherPlayerIsHere()
+member:bool AnotherPlayerIsHere(bool with_ship = TRUE)
 {
  UI:UpdateConsole["AnotherPlayerHere():"]
  if !${Config.Combat.RunAnotherPlayer}
@@ -1176,12 +1199,16 @@ member:bool AnotherPlayerIsHere()
  }
  variable index:entity tgtIndex
  variable iterator tgtIterator
- EVE:QueryEntities[tgtIndex, "CategoryID = CATEGORYID_SHIP || GroupID = GROUPID_WRECK || GroupID = GROUPID_CARGO_CONTAINER"]
+ variable string filter
+ filter:Set["GroupID = GROUPID_WRECK || GroupID = GROUPID_CARGO_CONTAINER"]
+ if ${with_ship}
+  filter:Concat[" || CategoryID = CATEGORYID_SHIP"]
+ EVE:QueryEntities[tgtIndex, ${filter}]
  tgtIndex:GetIterator[tgtIterator]
  if ${tgtIterator:First(exists)}
  do
  {
-  if ${tgtIterator.Value.Owner.CharID} != ${Me.CharID}
+  if ${tgtIterator.Value.Owner.CharID} != ${Me.CharID} && ${Social.goodguy[${tgtIterator.Value.Owner}]}
   {
    UI:UpdateConsole["found another player mark g ${tgtIterator.Value.Group} n ${tgtIterator.Value.Name} o ${tgtIterator.Value.Owner.Name}"]
    return TRUE
@@ -1258,7 +1285,7 @@ function WarpToPilot()
 
   ;if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} < 70000
   ;{
-   call This.OrbitCenterOfAnomaly ${Config.Coords.OrbitDistance}
+  ; call This.OrbitCenterOfAnomaly ${Config.Coords.OrbitDistance}
   ;if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 5000
   ;{
   ; UI:UpdateConsole["Aproaching ${FleetMembers.Get[1].ToEntity.Name}"]

@@ -143,7 +143,7 @@ objectdef obj_Configuration_Common
 
  method SetBotModeName(string value)
  {
-  This.CommonRef:AddSetting[Bot Mode Name,${value}]
+  This.CommonRef:AddSetting[Bot Mode Name, "${value}"]
  }
 
  member:int DronesInBay()
@@ -163,7 +163,7 @@ objectdef obj_Configuration_Common
 
  method SetHomeStation(string value)
  {
-  This.CommonRef:AddSetting[Home Station,${value}]
+  This.CommonRef:AddSetting[Home Station, "${value}"]
  }
 
  member:bool UseDevelopmentBuild()
@@ -184,7 +184,7 @@ objectdef obj_Configuration_Common
 
  method SetLoginName(string value)
  {
-  This.CommonRef:AddSetting[Login Name, ${value}]
+  This.CommonRef:AddSetting[Login Name, "${value}"]
  }
 
  member:string LoginPassword()
@@ -194,7 +194,7 @@ objectdef obj_Configuration_Common
 
  method SetLoginPassword(string value)
  {
-  This.CommonRef:AddSetting[Login Password,${value}]
+  This.CommonRef:AddSetting[Login Password, "${value}"]
  }
 
  member:bool AutoLogin()
@@ -312,7 +312,7 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[MyWarRegion, 1]
   This.CombatRef:AddSetting[WaitSecSafe, 1]
   This.CombatRef:AddSetting[MySingleLocal, FALSE]
-  This.CombatRef:AddSetting[FullDeactivateOrbit, FALSE]
+  This.CombatRef:AddSetting[FullDeactivateOrbit, TRUE]
   This.CombatRef:AddSetting[DeactivateMWD, FALSE]
   This.CombatRef:AddSetting[MyOrbitRange, 1]
   This.CombatRef:AddSetting[GameOverShield, TRUE]
@@ -612,7 +612,7 @@ objectdef obj_Configuration_Combat
 
  member:bool FullDeactivateOrbit()
  {
-  return ${This.CombatRef.FindSetting[FullDeactivateOrbit, FALSE]}
+  return ${This.CombatRef.FindSetting[FullDeactivateOrbit, TRUE]}
  }
 
  method SetFullDeactivateOrbit(bool value)
@@ -796,7 +796,77 @@ objectdef obj_Configuration_Combat
 
  method SetAbandonWrecks(bool value)
  {
-  This.CombatRef:AddSetting[RunAbandonWrecks, ${value}]
+  This.CombatRef:AddSetting[AbandonWrecks, ${value}]
+ }
+
+ member:bool Navigate()
+ {
+  return ${This.CombatRef.FindSetting[Navigate, TRUE]}
+ }
+
+ method SetNavigate(bool value)
+ {
+  This.CombatRef:AddSetting[Navigate, ${value}]
+ }
+
+ member:bool NavigateMWD()
+ {
+  return ${This.CombatRef.FindSetting[NavigateMWD, TRUE]}
+ }
+
+ method SetNavigateMWD(bool value)
+ {
+  This.CombatRef:AddSetting[NavigateMWD, ${value}]
+ }
+
+ member:string NavigateAction()
+ {
+  return ${This.CombatRef.FindSetting[NavigateAction, "orbit"]}
+ }
+
+ method SetNavigateAction(string value)
+ {
+  This.CombatRef:AddSetting[NavigateAction, "${value}"]
+ }
+
+ member:int NavigateDistance()
+ {
+  return ${This.CombatRef.FindSetting[NavigateDistance, 9999]}
+ }
+
+ method SetNavigateDistance(int value)
+ {
+  This.CombatRef:AddSetting[NavigateDistance, ${value}]
+ }
+
+ member:string NavigateEntity()
+ {
+  return ${This.CombatRef.FindSetting[NavigateEntity, "anomaly"]}
+ }
+
+ method SetNavigateEntity(string value)
+ {
+  This.CombatRef:AddSetting[NavigateEntity, "${value}"]
+ }
+
+ member:int NavigateMWDAccuracy()
+ {
+  return ${This.CombatRef.FindSetting[NavigateMWDAccuracy, 3333]}
+ }
+
+ method SetNavigateMWDAccuracy(int value)
+ {
+  This.CombatRef:AddSetting[NavigateMWDAccuracy, ${value}]
+ }
+
+ member:int FireRange()
+ {
+  return ${This.CombatRef.FindSetting[FireRange, 333333]}
+ }
+
+ method SetFireRange(int value)
+ {
+  This.CombatRef:AddSetting[FireRange, ${value}]
  }
 
 }
@@ -863,6 +933,16 @@ objectdef obj_Configuration_Labels
   This.LabelsRef:AddSetting[SalvageSizeWreck, 1]
  }
 
+ member:string ScavengePrefix()
+ {
+  return ${This.LabelsRef.FindSetting[ScavengePrefix,""]}
+ }
+
+ method SetScavengePrefix(string value)
+ {
+  This.LabelsRef:AddSetting[ScavengePrefix, "${value}"]
+ }
+
  member:string SafeSpotPrefix()
  {
   return ${This.LabelsRef.FindSetting[Safe Spot Prefix,"SPOT"]}
@@ -870,26 +950,26 @@ objectdef obj_Configuration_Labels
 
  method SetSafeSpotPrefix(string value)
  {
-  This.LabelsRef:AddSetting[Safe Spot Prefix,${value}]
+  This.LabelsRef:AddSetting[Safe Spot Prefix, "${value}"]
  }
 
  member:string AmmoSpot()
  {
-  return ${This.LabelsRef.FindSetting[Ammo Spot,"AMMO"]}
+  return ${This.LabelsRef.FindSetting[Ammo Spot, "AMMO"]}
  }
 
  method SetAmmoSpot(string value)
  {
-  This.LabelsRef:AddSetting[Ammo Spot,${value}]
+  This.LabelsRef:AddSetting[Ammo Spot, "${value}"]
  }
 
  member:string RatterPointsPrefix()
  {
-  return ${This.LabelsRef.FindSetting[RatterPoints Prefix,"empty"]}
+  return ${This.LabelsRef.FindSetting[RatterPoints Prefix, "empty"]}
  }
  method SetRatterPointsPrefix(string value)
  {
-  This.LabelsRef:AddSetting[RatterPoints Prefix,${value}]
+  This.LabelsRef:AddSetting[RatterPoints Prefix, "${value}"]
  }
 
  member:bool RatterUseMyBook()
@@ -917,7 +997,7 @@ objectdef obj_Configuration_Labels
  }
  method SetLootPrefix(string value)
  {
-  This.LabelsRef:AddSetting[Loot Prefix,${value}]
+  This.LabelsRef:AddSetting[Loot Prefix, "${value}"]
  }
 
  member:int LootSizeWreck()

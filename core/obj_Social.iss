@@ -264,11 +264,13 @@ objectdef obj_Social
      {
       if ${tgtIterator.Value.Owner.Corp.ID} != ${Me.Corp.ID}
       {
+       UI:UpdateConsole["1"]
        badgrid:Set[TRUE]
       }
      } else {
       if !${This.goodguy[${tgtIterator.Value.Owner}]}
       {
+       UI:UpdateConsole["2"]
        badgrid:Set[TRUE]
       }
      }

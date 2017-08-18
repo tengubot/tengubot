@@ -134,7 +134,10 @@ function main()
 
  UI:Reload
 
- WindowText EVE - ${Me.Name}
+; WindowText EVE - ${Me.Name}
+ WindowText EVE
+
+ run hideall
 
  UI:UpdateConsole["-=Paused: Press Run-="]
  Script:Pause
