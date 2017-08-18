@@ -8,7 +8,6 @@ objectdef obj_Ratter
  variable time NextPulse
  variable int PulseIntervalInSeconds = 2
  variable obj_Combat Combat
- variable obj_Social Social
  variable string Moon = "MOCW-2 - Moon 1"
  variable bool FirstInPlex = TRUE
 ; =========================================
@@ -29,20 +28,36 @@ objectdef obj_Ratter
  variable string ScanMarkLabel
  variable index:fleetmember FleetMembers
  variable iterator FleetMember
- variable float MyVolumeCharges=${Me.Ship.Module[HiSlot0].Volume}
-        variable string MyChargesS=${Me.Ship.Module[HiSlot0].Charge}
+ variable float MyVolumeCharges
+ variable string MyChargesS
 
  method Initialize()
  {
   Event[OnFrame]:AttachAtom[This:Pulse]
+
+  variable index:module ModuleList
+  variable iterator ModuleIter
+  Me.Ship:GetModules[ModuleList]
+  ModuleList:GetIterator[ModuleIter]
+  if ${ModuleIter:First(exists)}
+  do
+  {
+   if ${ModuleIter.Value.ToItem.Slot.Left[6].Equal[HiSlot]} == TRUE && ${ModuleIter.Value.Charge.Volume} != NULL && ${ModuleIter.Value.Charge.Name.Equal[NULL]} == FALSE
+   {
+    MyVolumeCharges:Set[${ModuleIter.Value.Charge.Volume}]
+    MyChargesS:Set[${ModuleIter.Value.Charge.Name}]
+    break
+   }
+  }
+  while ${ModuleIter:Next(exists)}
 
   BotModules:Insert["Ratter"]
   This.CurrentState:Set["FIGHT"]
   Targets:ResetTargets
   This.Combat:Initialize
   This.Combat:SetMode["AGGRESSIVE"]
-  UI:UpdateConsole["My Charges- ${MyChargesS}", LOG_MINOR]
-  UI:UpdateConsole["My VolumeCharges- ${MyVolumeCharges}", LOG_MINOR]
+  UI:UpdateConsole["My Charges - ${MyChargesS}", LOG_MINOR]
+  UI:UpdateConsole["My VolumeCharges - ${MyVolumeCharges}", LOG_MINOR]
   UI:UpdateConsole["obj_Ratter: Initialized", LOG_MINOR]
  }
 
@@ -61,12 +76,10 @@ objectdef obj_Ratter
   if ${Time.Timestamp} >= ${This.NextPulse.Timestamp}
   {
    This:SetState[]
-
-      This.NextPulse:Set[${Time.Timestamp}]
-      This.NextPulse.Second:Inc[${This.PulseIntervalInSeconds}]
-      This.NextPulse:Update
+   This.NextPulse:Set[${Time.Timestamp}]
+   This.NextPulse.Second:Inc[${This.PulseIntervalInSeconds}]
+   This.NextPulse:Update
   }
-
   ;; call the combat frame action code
   This.Combat:Pulse
  }
@@ -94,8 +107,7 @@ objectdef obj_Ratter
 ;====================================================
  function ProcessState()
  {
-
-     /* don't do anything if we aren't in Ratter bot mode! */
+  /* don't do anything if we aren't in Ratter bot mode! */
   if !${Config.Common.BotModeName.Equal[Ratter]}
    return
 
@@ -120,7 +132,7 @@ objectdef obj_Ratter
   }
  }
 
-function Move()
+ function Move()
  {
   Ship:Activate_SensorBoost
   if ${Social.IsSafe}
@@ -138,24 +150,22 @@ function Move()
     UI:UpdateConsole["obj_Ratter: 1"]
     wait 10
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
-    wait ${Config.Coords.MouseDelay}
+    wait 100
     EVE:Execute[CmdQuitGame]
    }
    wait 5
    ;UI:UpdateConsole["obj_Ratter: There are 1:${EVE.GetLocalPilots} 2:${GetLocalPilots} pilots in system."]
-
-
-
-
 
    This.FirstInPlex:Set[TRUE]
 
@@ -175,6 +185,8 @@ function Move()
    {
     echo ScaNNEr
     Ship:Deactivate_Weapons
+    Ship:Deactivate_Tracking_Computer
+    Ship:Deactivate_ECCM
     Ship:Reload_Weapons[TRUE]
     if ${Me.ToEntity.IsWarpScrambled}
     {
@@ -182,7 +194,6 @@ function Move()
     }
     call This.Scanner
    }
-
    Targets:ResetTargets
   }
   ; Wait for the rats to warp into the belt. Reports are between 10 and 20 seconds.
@@ -202,7 +213,6 @@ function Move()
    wait 10
   }
 
-
   Count:Set[0]
   while (${Count:Inc} < 5) && ${Social.IsSafe} && !${Targets.PC} && ${Targets.NPC}
   {
@@ -213,7 +223,7 @@ function Move()
 
 
 
-function Fight()
+ function Fight()
  {
 
   ;if ${This.Social.GankWereHere} && ${Entity["TypeID = 28356"].ID(exists)}
@@ -231,6 +241,8 @@ function Fight()
   ;}
 
   Ship:Activate_SensorBoost
+  Ship:Activate_Tracking_Computer
+  Ship:Activate_ECCM
   ;UI:UpdateConsole["Activate SensorBoost"]
 
   if ${Ship.Drones.DronesInSpace} > 0
@@ -264,9 +276,9 @@ function Fight()
    {
     Ship:Deactivate_SmartBomb
    }
-   ;  если нас скрамбят и есть приорити таргет, то это 100% скрамбит нпс в рейндже смарты.  Так что можно отследить и врубить смарту без лока цели.
+   ;если нас скрамбят и есть приорити таргет, то это 100% скрамбит нпс в рейндже смарты.  Так что можно отследить и врубить смарту без лока цели.
    ;echo prioryty present ? - ${Targets.PriorityTargetPresent} scrambled? - ${Me.ToEntity.IsWarpScrambled}
-            ;UI:UpdateConsole["prioryty present ? - ${Targets.PriorityTargetPresent} scrambled? - ${Me.ToEntity.IsWarpScrambled}"]
+   ;UI:UpdateConsole["prioryty present ? - ${Targets.PriorityTargetPresent} scrambled? - ${Me.ToEntity.IsWarpScrambled}"]
 
    if !${This.FirstInPlex}
    {
@@ -393,7 +405,7 @@ function Fight()
 ; COSMIC - WAIT
   variable int waitinplex
 
- if ${Entity["TypeID = 28356"].ID(exists)}
+  if ${Entity["TypeID = 28356"].ID(exists)}
   {
    UI:UpdateConsole["Waiting stupid rats at 30 seconds."]
    for (waitinplex:Set[6] ; ${waitinplex}>=1 ; waitinplex:Dec)
@@ -471,7 +483,7 @@ function Fight()
 
 ; WRECK - SQUADCOMM
 
-  if  ${Entity["Wreck"].ID(exists)} && !${Config.Coords.Support}
+  if ${Entity["Wreck"].ID(exists)} && !${Config.Coords.Support}
   {
    variable index:fleetmember FMembers
    variable iterator FMember
@@ -565,10 +577,10 @@ function Scanner()
   ; ждем пока пройдет скан
   wait ${Config.Coords.AnalyzeTime}
   ;возвращаем пробки назад. ибо они не нужны уже чтобы оперировать результатами сканера
-  Mouse:SetPosition[${Config.Coords.RecoverX},${Config.Coords.RecoverY}]
-  wait ${Config.Coords.MouseDelay}
-  Mouse:LeftClick
-  wait ${Config.Coords.MouseDealy}
+  ;Mouse:SetPosition[${Config.Coords.RecoverX},${Config.Coords.RecoverY}]
+  ;wait ${Config.Coords.MouseDelay}
+  ;Mouse:LeftClick
+  ;wait ${Config.Coords.MouseDealy}
 
 /* модуль букмарка первого результата */
   X:Set[${Config.Coords.1stResultX}]
@@ -794,10 +806,7 @@ function AnomalyBookmark()
 {
  ScanMarkIndex:Clear
  EVE:GetBookmarks[ScanMarkIndex]
-
-
  s:Set[${ScanMarkIndex.Used}]
-
  while ${s} > 0
  {
   AnomalyName:Set[${Config.Coords.AnomalyName}]
@@ -820,7 +829,6 @@ function AnomalyBookmark()
   {
    ScanMarkIndex:Remove[${s}]
   }
-
   s:Dec
  }
  ScanMarkIndex:Collapse
@@ -838,92 +846,82 @@ function AnomalyBookmark()
      if ${This.Social.GankWereHere}
      {
       call Ship.WarpToBookMark ${ScanMarkIterator.Value.ID}, ${Config.Coords.WarpRange}
-
       wait 50
-
-      ;if ${Config.Combat.MySingleLocal}
-      ;{
+      if !${Social.IsPlayerInMyRange}
+      {
+       UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
+       wait 10
        if !${Social.IsPlayerInMyRange}
-                     {
-        UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
+       {
+        UI:UpdateConsole["CHECK N2: Seeking another Player is making that plex"]
         wait 10
         if !${Social.IsPlayerInMyRange}
         {
-         UI:UpdateConsole["CHECK N2: Seeking another Player is making that plex"]
-         wait 10
-         if !${Social.IsPlayerInMyRange}
-         {
-          UI:UpdateConsole["CHECK N3: No one makes that plex, IT IS MY PLEX!"]
-         }
-         else
-         {
-          UI:UpdateConsole["CHECK N3: Found another player, LEAVING PLEX!"]
-          ScanMarkIterator.Value:Remove
-          This.CurrentState:Set["MOVE"]
-            return
-         }
+         UI:UpdateConsole["CHECK N3: No one makes that plex, IT IS MY PLEX!"]
         }
         else
         {
-         UI:UpdateConsole["CHECK N2: Found another player, LEAVING PLEX!"]
+         UI:UpdateConsole["CHECK N3: Found another player, LEAVING PLEX!"]
          ScanMarkIterator.Value:Remove
          This.CurrentState:Set["MOVE"]
-           return
+         return
         }
        }
        else
        {
-        UI:UpdateConsole["CHECK N1: Found another player, LEAVING PLEX!"]
+        UI:UpdateConsole["CHECK N2: Found another player, LEAVING PLEX!"]
         ScanMarkIterator.Value:Remove
         This.CurrentState:Set["MOVE"]
           return
        }
-      ;}
+      }
+      else
+      {
+       UI:UpdateConsole["CHECK N1: Found another player, LEAVING PLEX!"]
+       ScanMarkIterator.Value:Remove
+       This.CurrentState:Set["MOVE"]
+        return
+      }
      }
      else
      {
       call Ship.WarpToBookMark ${ScanMarkIterator.Value.ID}, ${Config.Coords.WarpRange}
-
       wait 50
-
-      ;if ${Config.Combat.MySingleLocal}
-      ;{
+      if !${Social.IsPlayerInMyRange}
+      {
+       UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
+       wait 10
        if !${Social.IsPlayerInMyRange}
-                     {
-        UI:UpdateConsole["CHECK N1: Seeking another Player is making that plex"]
+       {
+        UI:UpdateConsole["CHECK N2: Seeking another Player is making that plex"]
         wait 10
         if !${Social.IsPlayerInMyRange}
         {
-         UI:UpdateConsole["CHECK N2: Seeking another Player is making that plex"]
-         wait 10
-         if !${Social.IsPlayerInMyRange}
-         {
-          UI:UpdateConsole["CHECK N3: No one makes that plex, IT IS MY PLEX!"]
-         }
-         else
-         {
-          UI:UpdateConsole["CHECK N3: Found another player, LEAVING PLEX!"]
-          ScanMarkIterator.Value:Remove
-          This.CurrentState:Set["MOVE"]
-            return
-         }
+         UI:UpdateConsole["CHECK N3: No one makes that plex, IT IS MY PLEX!"]
         }
         else
         {
-         UI:UpdateConsole["CHECK N2: Found another player, LEAVING PLEX!"]
+         UI:UpdateConsole["CHECK N3: Found another player, LEAVING PLEX!"]
          ScanMarkIterator.Value:Remove
          This.CurrentState:Set["MOVE"]
-           return
+         return
         }
        }
        else
        {
-        UI:UpdateConsole["CHECK N1: Found another player, LEAVING PLEX!"]
+        UI:UpdateConsole["CHECK N2: Found another player, LEAVING PLEX!"]
         ScanMarkIterator.Value:Remove
         This.CurrentState:Set["MOVE"]
-          return
+        return
        }
-      ;}
+      }
+      else
+      {
+       UI:UpdateConsole["CHECK N1: Found another player, LEAVING PLEX!"]
+       ScanMarkIterator.Value:Remove
+       This.CurrentState:Set["MOVE"]
+       return
+      }
      }
      wait 20
      EVE:Execute[CmdStopShip]
@@ -997,18 +995,19 @@ function CheckAmmo()
    MyErrMess:Set["WARNING: HANGAR NOT FOUND - WAR ENDED !"]
    This.CurrentState:Set["GAMEOVER", LOG_MINOR]
    UI:UpdateConsole["WARNING: AMMO NOT FOUND - WAR ENDED!", LOG_CRITICAL]
-   wait 100
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
-   wait ${Config.Coords.MouseDelay}
+   wait 100
    EVE:Execute[CmdQuitGame]
   }
 
@@ -1090,18 +1089,19 @@ function CheckAmmo()
    MyErrMess:Set["WARNING: AMMO NOT FOUND - WAR ENDED!"]
    This.CurrentState:Set["GAMEOVER", LOG_MINOR]
    UI:UpdateConsole["last WARNING: AMMO NOT FOUND - WAR ENDED!", LOG_CRITICAL]
-   wait 100
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
-   wait ${Config.Coords.MouseDelay}
+   wait 100
    EVE:Execute[CmdQuitGame]
   }
   else
@@ -1170,92 +1170,90 @@ function ResetFleetMembers()
 function WarpToPilot()
 {
 
-   ;if ${Config.Coords.AmmoReload}
-   ;{
-   ;call This.CheckAmmo
-   ;}
+ ;if ${Config.Coords.AmmoReload}
+ ;{
+ ;call This.CheckAmmo
+ ;}
 
  echo  function warptopilot used ${FleetMembers.Used} and ${FleetMembers.Used} <= 0
  echo ${Config.Coords.PilotToSupport} - pilot name
  if ${FleetMembers.Used} <= 0
-   {
-   Call This.ResetFleetMembers
-   }
-        if  ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > WARP_RANGE
-        {
-        if ${Config.Coords.AmmoReload}
-        {
-         call This.CheckAmmo
-        }
-         echo WARPING!
-        FleetMembers.Get[1]:WarpTo
-        This.CurrentState:Set["FIGHT"]
-        wait 100
-        }
-        else
-        {
-          echo else 2
-          echo  ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]}
+ {
+  Call This.ResetFleetMembers
+ }
+ if  ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > WARP_RANGE
+ {
+ if ${Config.Coords.AmmoReload}
+ {
+  call This.CheckAmmo
+ }
+  echo WARPING!
+ FleetMembers.Get[1]:WarpTo
+ This.CurrentState:Set["FIGHT"]
+ wait 100
+ }
+ else
+ {
+  echo else 2
+  echo  ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]}
 
-          ;if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} < 70000
-          ;{
-          call This.OrbitCenterOfAnomaly ${Config.Coords.OrbitDistance}
-          ;if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 5000
-          ;{
-          ; UI:UpdateConsole["Aproaching ${FleetMembers.Get[1].ToEntity.Name}"]
-          ; FleetMembers.Get[1].ToEntity:Approach
-          ;}
+  ;if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} < 70000
+  ;{
+   call This.OrbitCenterOfAnomaly ${Config.Coords.OrbitDistance}
+  ;if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 5000
+  ;{
+  ; UI:UpdateConsole["Aproaching ${FleetMembers.Get[1].ToEntity.Name}"]
+  ; FleetMembers.Get[1].ToEntity:Approach
+  ;}
 
-          ;UI:UpdateConsole["Approaching? - ${Me.ToPilot.Following.Name.Left[4].Equal[${Config.Coords.PilotToSupport}"]
-          ;UI:UpdateConsole["Name1? - ${Config.Coords.PilotToSupport}"]
-          ;UI:UpdateConsole["Name2? - ${Me.ToPilot.Name.Left[4]}"]
-          ;UI:UpdateConsole["Name3? - ${Me.ToPilot.Approaching.Name.Left[4]}"]
-          ;UI:UpdateConsole["Name4? - ${Me.ToPilot.Approaching.Name.Left[4].Equal["Mp C"]}"]
+  ;UI:UpdateConsole["Approaching? - ${Me.ToPilot.Following.Name.Left[4].Equal[${Config.Coords.PilotToSupport}"]
+  ;UI:UpdateConsole["Name1? - ${Config.Coords.PilotToSupport}"]
+  ;UI:UpdateConsole["Name2? - ${Me.ToPilot.Name.Left[4]}"]
+  ;UI:UpdateConsole["Name3? - ${Me.ToPilot.Approaching.Name.Left[4]}"]
+  ;UI:UpdateConsole["Name4? - ${Me.ToPilot.Approaching.Name.Left[4].Equal["Mp C"]}"]
 
-           ;if !${Me.ToPilot.Following.Name.Left[4].Equal["Mp C"]}
-           ;{
-           ; Echo Aproaching!!!!
-           ; FleetMembers.Get[1].ToEntity:Approach
-           ; Ship:Activate_AfterBurner[]
-           ; This.CurrentState:Set["FIGHT"]
-           ;}
-           ;else
-           ;{
-           ; UI:UpdateConsole["Already aproaching ${FleetMembers.Get[1].ToEntity.Name}"]
-           ; This.CurrentState:Set["FIGHT"]
-           ;}
-          ;}
+  ;if !${Me.ToPilot.Following.Name.Left[4].Equal["Mp C"]}
+  ;{
+  ; Echo Aproaching!!!!
+  ; FleetMembers.Get[1].ToEntity:Approach
+  ; Ship:Activate_AfterBurner[]
+  ; This.CurrentState:Set["FIGHT"]
+  ;}
+  ;else
+  ;{
+  ; UI:UpdateConsole["Already aproaching ${FleetMembers.Get[1].ToEntity.Name}"]
+  ; This.CurrentState:Set["FIGHT"]
+  ;}
+  ;}
 
-          ;elseif ${Safespots.IsNearSafespot} && ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 70000
-          ;{
-          ; echo  ${Me.ToEntity.Approaching.Name.Left[4].Equal[${Config.Coords.PilotToSupport}]} - PILOT NAME
-         ; if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 1000
-         ; {
-         ;  FleetMembers.Get[1].ToEntity:Approach
-         ; }
-           ;if !${Me.ToEntity.Following.Name.Left[4].Equal["Mp C"]}
-           ;{
-           ; Echo Aproaching!!!!
-           ; FleetMembers.Get[1].ToEntity:Approach
-           ; Ship:Activate_AfterBurner[]
-           ; This.CurrentState:Set["FIGHT"]
-           ;}
-          ; else
-          ; {
-          ;  echo Curently approaching!
-          ;  This.CurrentState:Set["FIGHT"]
-          ; }
-          ;}
+  ;elseif ${Safespots.IsNearSafespot} && ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 70000
+  ;{
+  ; echo  ${Me.ToEntity.Approaching.Name.Left[4].Equal[${Config.Coords.PilotToSupport}]} - PILOT NAME
+  ; if ${Math.Distance[${Me.ToEntity.X}, ${Me.ToEntity.Y}, ${Me.ToEntity.Z}, ${FleetMembers.Get[1].ToPilot.ToEntity.X}, ${FleetMembers.Get[1].ToPilot.ToEntity.Y}, ${FleetMembers.Get[1].ToPilot.ToEntity.Z}]} > 1000
+  ; {
+  ;  FleetMembers.Get[1].ToEntity:Approach
+  ; }
+  ;if !${Me.ToEntity.Following.Name.Left[4].Equal["Mp C"]}
+  ;{
+  ; Echo Aproaching!!!!
+  ; FleetMembers.Get[1].ToEntity:Approach
+  ; Ship:Activate_AfterBurner[]
+  ; This.CurrentState:Set["FIGHT"]
+  ;}
+  ; else
+  ; {
+  ;  echo Curently approaching!
+  ;  This.CurrentState:Set["FIGHT"]
+  ; }
+  ;}
 
-          ;else
-          ;{
-          ; UI:UpdateConsole["REWARPING!"]
-         ; call Safespots.WarpTo
-          ; This.CurrentState:Set["MOVE"]
-          ;}
-        }
-
-
+  ;else
+  ;{
+  ; UI:UpdateConsole["REWARPING!"]
+  ; call Safespots.WarpTo
+  ; This.CurrentState:Set["MOVE"]
+  ;}
+ }
 }
 ;========================================================================================================================================================================
 

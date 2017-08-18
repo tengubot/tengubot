@@ -24,12 +24,12 @@ objectdef obj_Drones
  variable iterator ShipDroneIterator
  variable string CurrentDrones = FIGHTERS
  variable index:int64 UnsupportedDronesIndex
-    variable index:int64 LightDronesIndex
-    variable index:int64 MediumDronesIndex
-  variable index:int64 HeavyDronesIndex
-  variable index:int64 SentryDronesIndex
-  variable index:int64 FighterDronesIndex
-  variable iterator ShipDroneIterator
+ variable index:int64 LightDronesIndex
+ variable index:int64 MediumDronesIndex
+ variable index:int64 HeavyDronesIndex
+ variable index:int64 SentryDronesIndex
+ variable index:int64 FighterDronesIndex
+ variable iterator ShipDroneIterator
  variable index:item ShipDroneIndex
  ;variable string CurrentDrones = FIGHTERS
 
@@ -156,20 +156,20 @@ objectdef obj_Drones
   }
 
   if (${Me.Ship.DronebayCapacity} > 0 && \
-      ${This.DronesInBay} == 0 && \
-      ${This.DronesInSpace} < ${Config.Combat.MinimumDronesInSpace})
-     {
+   ${This.DronesInBay} == 0 && \
+   ${This.DronesInSpace} < ${Config.Combat.MinimumDronesInSpace})
+  {
    ShortageCount:Inc
-      if ${ShortageCount} > 10
-      {
-       return TRUE
-      }
-     }
-     else
-     {
-      ShortageCount:Set[0]
-     }
-     return FALSE
+   if ${ShortageCount} > 10
+   {
+    return TRUE
+   }
+  }
+  else
+  {
+   ShortageCount:Set[0]
+  }
+  return FALSE
  }
 
  ; Returns the number of Drones in our station hanger.

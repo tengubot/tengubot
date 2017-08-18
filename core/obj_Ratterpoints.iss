@@ -97,4 +97,3 @@ objectdef obj_Ratterpoints
 		call This.WarpToNextRatterPoint
 	}
 }
-

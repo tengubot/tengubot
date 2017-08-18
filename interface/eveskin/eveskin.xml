@@ -1,54 +1,68 @@
 <ISUI>
-	<template name='EVESkin.Window.TitleBar.Texture' Filename='eveskin/MainGUI/optionswindow_titlebar.png' />
-	<template name='EVEskin.Window.TitleBar.Minimize.Texture' Filename='eveskin/MainGUI/button_minimize.png' />
-	<template name='EVEskin.Window.TitleBar.Maximize.Texture' Filename='eveskin/MainGUI/button_minimize.png' />
-	<template name='EVESkin.Window.TitleBar.Close.Texture' Filename='eveskin/MainGUI/button_close.png' />
-	<template name='EVESkin.Window.TitleBar.PauseButton.Texture' Filename='eveskin/MainGUI/button_pause.png' />
-	<template name='EVESkin.Window.TitleBar.RunButton.Texture' Filename='eveskin/MainGUI/button_run.png' />
+ <template name='EVESkin.Window.TitleBar.Texture' Filename='eveskin/MainGUI/optionswindow_titlebar.png' />
+ <template name='EVEskin.Window.TitleBar.Minimize.Texture' Filename='eveskin/MainGUI/button_minimize.png' />
+ <template name='EVEskin.Window.TitleBar.Maximize.Texture' Filename='eveskin/MainGUI/button_minimize.png' />
+ <template name='EVESkin.Window.TitleBar.Close.Texture' Filename='eveskin/MainGUI/button_close.png' />
+ <template name='EVESkin.Window.TitleBar.PauseButton.Texture' Filename='eveskin/MainGUI/button_pause.png' />
+ <template name='EVESkin.Window.TitleBar.RunButton.Texture' Filename='eveskin/MainGUI/button_run.png' />
 
-	<template name='EVEskin.Add.Texture'>
-		<Texture Filename='eveskin/MainGUI/button_plus.png' />
-	</template>
-	<template name='EVEskin.Remove.Texture'>
-		<Texture Filename='eveskin/MainGUI/button_minimize.png' />
-	</template
+ <template name='EVEskin.Add.Texture'>
+  <Texture Filename='eveskin/MainGUI/button_plus.png' />
+ </template>
+ <template name='EVEskin.Remove.Texture'>
+  <Texture Filename='eveskin/MainGUI/button_minimize.png' />
+ </template>
 
-	<template name='EVESkin.Window.Texture' Filename='eveskin/MainGUI/tab_frametexture.png' />
+ <template name='EVESkin.Window.Texture' Filename='eveskin/MainGUI/tab_frametexture.png' />
 
-	<template name='EVESkin.Window.TabButtonTexture' Filename='eveskin/MainGUI/button_empty.png' />
-	<template name='EVESkin.Window.TabButtonTexture2' Filename='eveskin/MainGUI/button_empty2.png' />
-	<template name='EVESkin.Window.TabButtonSelectedTexture' Filename='eveskin/MainGUI/button_empty.png' />
-	<template name='EVESkin.Window.TabButtonHoverTexture' Filename='eveskin/MainGUI/button_empty.png' />
+ <template name='EVESkin.Window.TabButtonTexture' Filename='eveskin/MainGUI/button_empty.png' />
+ <template name='EVESkin.Window.TabButtonTexture2' Filename='eveskin/MainGUI/button_empty2.png' />
+ <template name='EVESkin.Window.TabButtonSelectedTexture' Filename='eveskin/MainGUI/button_empty_selected.png' />
+ <template name='EVESkin.Window.TabButtonHoverTexture' Filename='eveskin/MainGUI/button_empty_highlight.png' />
+ <template name='EveSkin.Window.ClickButton'>
+  <Font template='Button.Font' />
+  <Texture Filename='eveskin/MainGUI/button_empty.png' />
+  <TextureHover Filename='eveskin/MainGUI/button_empty_highlight.png' />
+  <TexturePressed Filename='eveskin/MainGUI/button_empty_selected.png' />
+ </template>
+ <template name='EVESkin.Window.TabButtonLeftTexture'>
+  <Texture Filename='eveskin/MainGUI/button_left_long.png' />
+  <TexturePressed Filename='eveskin/MainGUI/button_left_long.png' />
+  <TextureHover Filename='eveskin/MainGUI/button_left.png' />
+ </template>
+ <template name='EVESkin.Window.TabButtonRightTexture'>
+  <Texture Filename='eveskin/MainGUI/button_right_long.png' />
+  <TexturePressed Filename='eveskin/MainGUI/button_right_long.png' />
+  <TextureHover Filename='eveskin/MainGUI/button_right.png' />
+ </template>
 
-	<template name='EVESkin.Font.TitleBar'>
-		<Name>Verdana</Name>
-		<Size>16</Size>
-		<Color>FF00FF00</Color>
-	</template>
+ <template name='EVESkin.Font.TitleBar'>
+  <Name>Verdana</Name>
+  <Size>16</Size>
+  <Color>FF00FF00</Color>
+ </template>
 
-	<template name='EVESkin.Font.Description'>
-		<Name>Arial</Name>
-		<Size>9</Size>
-		<Color>FFFF9900</Color>
-	</template>
+ <template name='EVESkin.Font.Description'>
+  <Name>Arial</Name>
+  <Size>9</Size>
+  <Color>FFFF9900</Color>
+ </template>
 
-	<template name='EVESkin.Font.Value'>
-		<Name>Lucida Console</Name>
-		<Size>9</Size>
-		<Color>FFFF9900</Color>
-	</template>
+ <template name='EVESkin.Font.Value'>
+  <Name>Lucida Console</Name>
+  <Size>9</Size>
+  <Color>FFFF9900</Color>
+ </template>
 
-	<template name='Button.Font'>
-		<Name>Verdana</Name>
-		<Size>12</Size>
-		<Color>FFFF9900</Color>
-	</template>
+ <template name='Button.Font'>
+  <Name>Verdana</Name>
+  <Size>12</Size>
+  <Color>FFFF9900</Color>
+ </template>
 
-	<template name='Console.Font'>
-		<Name>Verdana</Name>
-		<Size>16</Size>
-		<Color>FF00FF00</Color>
-	</template>
+ <template name='Console.Font' Template='Default Font'>
+  <Color>FF00FF00</Color>
+ </template>
 
   <!-- ListBox
   <template name='listbox.Texture' Filename='eveskin/MainGUI/ListBox.png'>
@@ -65,7 +79,7 @@
     <Sort>None</Sort>
     <!-- None, User, Text, Value -->
     <Texture Template='listbox.Texture' />
-   	<ScrollBar Template='listbox.ScrollBar' />
+    <ScrollBar Template='listbox.ScrollBar' />
   </template>
   <!-- ComboBox -->
   <template name='combobox.Texture' Filename='eveskin/MainGUI/Combobox.png'>
@@ -102,7 +116,7 @@
     <ButtonTexture Template='combobox.ButtonTexture' />
     <ListBox Template='combobox.listbox' />
     <ButtonWidth>16</ButtonWidth>
-  	<ScrollBar Template='combobox.ScrollBar' />
+   <ScrollBar Template='combobox.ScrollBar' />
   </template>
   <!-- Checkbox -->
   <template name='checkbox.Texture' Filename='eveskin/MainGUI/CheckBox.png'>
@@ -147,6 +161,9 @@
     <TextureCheckedHover Template='checkbox.TextureCheckedHover' />
     <TextureCheckedPressed Template='checkbox.TextureCheckedPressed' />
   </template>
+  <template name='text'>
+   <Font Template='checkbox.Font' />
+  </template>
   <!-- CommandCheckbox -->
   <template name='commandcheckbox.Texture' Filename='eveskin/MainGUI/CheckBox.png'>
     <Right>16</Right>
@@ -189,85 +206,65 @@
   </template>
 
 <!-- Min/Max Window -->
-	<template name='EVESkin.Window.TitleBar.Minimize'>
-		<X>r40</X>
-		<Y>0</Y>
-		<Width>20</Width>
-		<Height>20</Height>
-		<Texture Template='EVESkin.Window.TitleBar.Minimize.Texture' />
-	</template>
+ <template name='EVESkin.Window.TitleBar.Minimize'>
+  <Texture Template='EVESkin.Window.TitleBar.Minimize.Texture' />
+ </template>
 <!-- Close Window -->
-	<template name='EVESkin.Window.TitleBar.Close'>
-		<X>r20</X>
-		<Y>0</Y>
-		<Width>20</Width>
-		<Height>20</Height>
-		<Texture Template='EVESkin.Window.TitleBar.Close.Texture' />
-	</template>
-	<template name='EVESkin.Window.TitleBar.Maximize'>
-		<Texture Template='EVESkin.Window.TitleBar.Maximize.Texture' />
-	</template>
-	<template name='EVESkin.Window.Titlebar'>
-		<X>0</X>
-		<Y>0</Y>
-		<Texture Template='EVESkin.Window.Titlebar.Texture' />
-	</template>
-	<template name='EVESkin.Window.TitleBar.RunButton'>
-		<X>0</X>
-		<Y>0</Y>
-		<Width>46</Width>
-		<Height>20</Height>
-		<Texture Template='EVESkin.Window.TitleBar.RunButton.Texture' />
-	</template>
-	<template name='EVESkin.Window.TitleBar.PauseButton'>
-		<X>47</X>
-		<Y>0</Y>
-		<Width>46</Width>
-		<Height>20</Height>
-		<Texture Template='EVESkin.Window.TitleBar.PauseButton.Texture' />
-	</template>
+ <template name='EVESkin.Window.TitleBar.Close'>
+  <Texture Template='EVESkin.Window.TitleBar.Close.Texture' />
+ </template>
+ <template name='EVESkin.Window.TitleBar.Maximize'>
+  <Texture Template='EVESkin.Window.TitleBar.Maximize.Texture' />
+ </template>
+ <template name='EVESkin.Window.Titlebar'>
+  <X>0</X>
+  <Y>0</Y>
+  <Texture Template='EVESkin.Window.Titlebar.Texture' />
+ </template>
+ <template name='EVESkin.Window.TitleBar.RunButton'>
+  <Texture Template='EVESkin.Window.TitleBar.RunButton.Texture' />
+ </template>
+ <template name='EVESkin.Window.TitleBar.PauseButton'>
+  <Texture Template='EVESkin.Window.TitleBar.PauseButton.Texture' />
+ </template>
 
 
-	<template name='EVESkin'>
-		<X>0</X>
-		<Y>0</Y>
-		<Texture Template='EVESkin.Window.Texture' />
-	</template>
+ <template name='EVESkin'>
+  <X>0</X>
+  <Y>0</Y>
+  <Texture Template='EVESkin.Window.Texture' />
+ </template>
 
-	<template name='EVESkin.TabControl'>
-		<Font template='Button.Font' />
-		<SelectedTextColor>FFFFFF00</SelectedTextColor>
-		<TabHeight>16</TabHeight>
-		<TabBorder>0</TabBorder>
-		<FrameBackgroundColor>3</FrameBackgroundColor>
-		<FrameBorder>0</FrameBorder>
-		<FrameBorderColor>FF808080</FrameBorderColor>
-		<FrameTexture Template="EVESkin.Window.Texture" />
-		<LeftTexture Template="EVESkin.Window.TabButtonTexture" />
-		<LeftPressedTexture Template="EVESkin.Window.TabButtonTexture" />
-		<LeftHoverTexture Template="EVESkin.Window.TabButtonTexture" />
-		<RightTexture Template="EVESkin.Window.TabButtonTexture" />
-		<RightPressedTexture Template="EVESkin.Window.TabButtonTexture" />
-		<RightHoverTexture Template="EVESkin.Window.TabButtonTexture" />
-		<TabTexture Template="EVESkin.Window.TabButtonTexture" />
-		<TabSelectedTexture Template="EVESkin.Window.TabButtonSelectedTexture" />
-	</template>
+ <template name='EVESkin.TabControl'>
+  <Font template='Button.Font' />
+  <SelectedTextColor>FFFFFF00</SelectedTextColor>
+  <TabHeight>16</TabHeight>
+  <TabBorder>0</TabBorder>
+  <FrameBackgroundColor>3</FrameBackgroundColor>
+  <FrameBorder>0</FrameBorder>
+  <FrameBorderColor>FFD4D0C8</FrameBorderColor>
+  <FrameTexture Template="EVESkin.Window.Texture" />
+  <LeftButton Template="EVESkin.Window.TabButtonLeftTexture" />
+  <RightButton Template="EVESkin.Window.TabButtonRightTexture" />
+  <TabTexture Template="EVESkin.Window.TabButtonTexture" />
+  <TabSelectedTexture Template="EVESkin.Window.TabButtonSelectedTexture" />
+ </template>
 
-	<template name='EVESkin.Console'>
-		<Border>0</Border>
-		<Font template='Console.Font' />
-		<SelectionColor>FF808080</SelectionColor>
-    <ScrollBar Template='console.ScrollBar' />
-    	<BackBufferSize>1500</BackBufferSize>
-	</template>
+ <template name='EVESkin.Console'>
+  <Border>0</Border>
+  <Font template='Console.Font' />
+  <SelectionColor>FF808080</SelectionColor>
+  <ScrollBar Template='console.ScrollBar' />
+  <BackBufferSize>6666</BackBufferSize>
+ </template>
 
 
-	<template name='EVESkin.Window.Empty'>
-		<X>178</X>
-		<Y>4</Y>
-		<Width>300</Width>
-		<Height>20</Height>
-		<Texture Template='EVESkin.Window.TabButtonTexture2' />
-	</template>
+ <template name='EVESkin.Window.Empty'>
+  <X>278</X>
+  <Y>6</Y>
+  <Width>300</Width>
+  <Height>20</Height>
+  <Texture Template='EVESkin.Window.TabButtonTexture2' />
+ </template>
 
 </ISUI>

@@ -293,9 +293,9 @@ objectdef obj_Configuration_Combat
   BaseConfig.BaseRef:AddSet[${This.SetName}]
 
   This.CombatRef:AddSetting[MinimumDronesInSpace,3]
-  This.CombatRef:AddSetting[MinimumArmorPct, 35]
-  This.CombatRef:AddSetting[MinimumShieldPct, 25]
-  This.CombatRef:AddSetting[MinimumCapPct, 5]
+  This.CombatRef:AddSetting[MinimumArmorPct, 99]
+  This.CombatRef:AddSetting[MinimumShieldPct, 55]
+  This.CombatRef:AddSetting[MinimumCapPct, 11]
   This.CombatRef:AddSetting[AlwaysShieldBoost, FALSE]
   This.CombatRef:AddSetting[AlwaysArmorBoost, FALSE]
   This.CombatRef:AddSetting[Launch Combat Drones, FALSE]
@@ -315,11 +315,21 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[FullDeactivateOrbit, FALSE]
   This.CombatRef:AddSetting[DeactivateMWD, FALSE]
   This.CombatRef:AddSetting[MyOrbitRange, 1]
-  This.CombatRef:AddSetting[GameOverShield, FALSE]
-  This.CombatRef:AddSetting[GameOverShieldTrashHold, 25]
-  This.CombatRef:AddSetting[GameOverArmor, FALSE]
-  This.CombatRef:AddSetting[GameOverArmorTrashHold, 50]
+  This.CombatRef:AddSetting[GameOverShield, TRUE]
+  This.CombatRef:AddSetting[GameOverShieldTrashHold, 11]
+  This.CombatRef:AddSetting[GameOverArmor, TRUE]
+  This.CombatRef:AddSetting[GameOverArmorTrashHold, 99]
   This.CombatRef:AddSetting[GameOverBlackList, FALSE]
+ }
+
+ member:bool RunOnLowAmmo()
+ {
+  return ${This.CombatRef.FindSetting[Run On Low Ammo, FALSE]}
+ }
+
+ method SetRunOnLowAmmo(bool value)
+ {
+  This.CombatRef:AddSetting[Run On Low Ammo, ${value}]
  }
 
  member:bool RunOnLowCap()
@@ -372,6 +382,36 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[Use Blacklist, ${value}]
  }
 
+ member:bool UseStandings()
+ {
+  return ${This.CombatRef.FindSetting[Use Standings, TRUE]}
+ }
+
+ method SetUseStandings(bool value)
+ {
+  This.CombatRef:AddSetting[Use Standings, ${value}]
+ }
+
+ member:bool TakeBreaks()
+ {
+  return ${This.CombatRef.FindSetting[Take Breaks, TRUE]}
+ }
+
+ method SetTakeBreaks(bool value)
+ {
+  This.CombatRef:AddSetting[Take Breaks, ${value}]
+ }
+
+ member:bool UseSafeCooldown()
+ {
+  return ${This.CombatRef.FindSetting[Use Safe Cooldown, TRUE]}
+ }
+
+ method SetUseSafeCooldown(bool value)
+ {
+  This.CombatRef:AddSetting[Use Safe Cooldown, ${value}]
+ }
+
  member:bool ChainSpawns()
  {
   return ${This.CombatRef.FindSetting[Chain Spawns, TRUE]}
@@ -392,15 +432,15 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[Chain Solo, ${value}]
  }
 
-        member:bool MySingleLocal()
-        {
-                return ${This.CombatRef.FindSetting[MySingleLocal, FALSE]}
-        }
+ member:bool MySingleLocal()
+ {
+  return ${This.CombatRef.FindSetting[MySingleLocal, FALSE]}
+ }
 
-        method SetMySingleLocal(bool value)
-        {
-                This.CombatRef:AddSetting[MySingleLocal, ${value}]
-        }
+ method SetMySingleLocal(bool value)
+ {
+  This.CombatRef:AddSetting[MySingleLocal, ${value}]
+ }
 
  member:int MinChainBounty()
  {
@@ -410,6 +450,56 @@ objectdef obj_Configuration_Combat
  method SetMinChainBounty(int value)
  {
   This.CombatRef:AddSetting[Min Chain Bounty,${value}]
+ }
+
+ member:int MinStanding()
+ {
+  return ${This.CombatRef.FindSetting[Min Standing, 1]}
+ }
+
+ method SetMinStanding(int value)
+ {
+  This.CombatRef:AddSetting[Min Standing,${value}]
+ }
+
+ member:int SafeCooldown()
+ {
+  return ${This.CombatRef.FindSetting[SafeCooldown, 10]}
+ }
+
+ method SetSafeCooldown(int value)
+ {
+  This.CombatRef:AddSetting[SafeCooldown, ${value}]
+ }
+
+ member:int SafeCooldownRandom()
+ {
+  return ${This.CombatRef.FindSetting[SafeCooldownRandom, 5]}
+ }
+
+ method SetSafeCooldownRandom(int value)
+ {
+  This.CombatRef:AddSetting[SafeCooldownRandom, ${value}]
+ }
+
+ member:int BreakDuration()
+ {
+  return ${This.CombatRef.FindSetting[Break Duration, 2]}
+ }
+
+ method SetBreakDuration(int value)
+ {
+  This.CombatRef:AddSetting[Break Duration, ${value}]
+ }
+
+ member:int TimeBetweenBreaks()
+ {
+  return ${This.CombatRef.FindSetting[Time Between Breaks, 5]}
+ }
+
+ method SetTimeBetweenBreaks(int value)
+ {
+  This.CombatRef:AddSetting[Time Between Breaks, ${value}]
  }
 
  member:bool LaunchDronesSpec()
@@ -424,21 +514,21 @@ objectdef obj_Configuration_Combat
 
  member:int MyWarRegion()
  {
-         return ${This.CombatRef.FindSetting[MyWarRegion, 1]}
+  return ${This.CombatRef.FindSetting[MyWarRegion, 1]}
  }
 
  method SetMyWarRegion(int value)
  {
-         This.CombatRef:AddSetting[MyWarRegion,${value}]
+  This.CombatRef:AddSetting[MyWarRegion,${value}]
  }
  member:int WaitSecSafe()
  {
-         return ${This.CombatRef.FindSetting[WaitSecSafe, 1]}
+  return ${This.CombatRef.FindSetting[WaitSecSafe, 1]}
  }
 
  method SetWaitSecSafe(int value)
  {
-         This.CombatRef:AddSetting[WaitSecSafe,${value}]
+  This.CombatRef:AddSetting[WaitSecSafe,${value}]
  }
 
  member:bool LaunchCombatDrones()
@@ -463,7 +553,7 @@ objectdef obj_Configuration_Combat
 
  member:int MinimumArmorPct()
  {
-  return ${This.CombatRef.FindSetting[MinimumArmorPct, 35]}
+  return ${This.CombatRef.FindSetting[MinimumArmorPct, 99]}
  }
 
  method SetMinimumArmorPct(int value)
@@ -473,7 +563,7 @@ objectdef obj_Configuration_Combat
 
  member:int MinimumShieldPct()
  {
-  return ${This.CombatRef.FindSetting[MinimumShieldPct, 25]}
+  return ${This.CombatRef.FindSetting[MinimumShieldPct, 55]}
  }
 
  method SetMinimumShieldPct(int value)
@@ -483,7 +573,7 @@ objectdef obj_Configuration_Combat
 
  member:int MinimumCapPct()
  {
-  return ${This.CombatRef.FindSetting[MinimumCapPct, 5]}
+  return ${This.CombatRef.FindSetting[MinimumCapPct, 11]}
  }
 
  method SetMinimumCapPct(int value)
@@ -549,9 +639,39 @@ objectdef obj_Configuration_Combat
   This.CombatRef:AddSetting[GameOverBlackList, ${value}]
  }
 
+ member:bool LootFaction()
+ {
+  return ${This.CombatRef.FindSetting[LootFaction, TRUE]}
+ }
+
+ method SetLootFaction(bool value)
+ {
+  This.CombatRef:AddSetting[LootFaction, ${value}]
+ }
+
+ member:bool GameOverGrid()
+ {
+  return ${This.CombatRef.FindSetting[GameOverGrid, TRUE]}
+ }
+
+ method SetGameOverGrid(bool value)
+ {
+  This.CombatRef:AddSetting[GameOverGrid, ${value}]
+ }
+
+ member:bool GameOverHostileScrambled()
+ {
+  return ${This.CombatRef.FindSetting[GameOverHostileScrambled, TRUE]}
+ }
+
+ method SetGameOverHostileScrambled(bool value)
+ {
+  This.CombatRef:AddSetting[GameOverHostileScrambled, ${value}]
+ }
+
  member:bool GameOverShield()
  {
-  return ${This.CombatRef.FindSetting[GameOverShield, FALSE]}
+  return ${This.CombatRef.FindSetting[GameOverShield, TRUE]}
  }
 
  method SetGameOverShield(bool value)
@@ -561,7 +681,7 @@ objectdef obj_Configuration_Combat
 
  member:int GameOverShieldTrashHold()
  {
-  return ${This.CombatRef.FindSetting[GameOverShieldTrashHold, 35]}
+  return ${This.CombatRef.FindSetting[GameOverShieldTrashHold, 11]}
  }
 
  method SetGameOverShieldTrashHold(int value)
@@ -571,7 +691,7 @@ objectdef obj_Configuration_Combat
 
  member:bool GameOverArmor()
  {
-  return ${This.CombatRef.FindSetting[GameOverArmor, FALSE]}
+  return ${This.CombatRef.FindSetting[GameOverArmor, TRUE]}
  }
 
  method SetGameOverArmor(bool value)
@@ -581,7 +701,7 @@ objectdef obj_Configuration_Combat
 
  member:int GameOverArmorTrashHold()
  {
-  return ${This.CombatRef.FindSetting[GameOverArmorTrashHold, 35]}
+  return ${This.CombatRef.FindSetting[GameOverArmorTrashHold, 99]}
  }
 
  method SetGameOverArmorTrashHold(int value)
@@ -645,11 +765,11 @@ objectdef obj_Configuration_Labels
  {
   BaseConfig.BaseRef:AddSet[${This.SetName}]
   This.LabelsRef:AddSetting[Safe Spot Prefix,"SPOT"]
-                This.LabelsRef:AddSetting[RatterPointsPrefix, "empty"]
-                This.LabelsRef:AddSetting[RatterUseMyBook, FALSE]
+  This.LabelsRef:AddSetting[RatterPointsPrefix, "empty"]
+  This.LabelsRef:AddSetting[RatterUseMyBook, FALSE]
   This.LabelsRef:AddSetting[Loot Prefix,"empty"]
-                This.LabelsRef:AddSetting[WreckSalvage, FALSE]
-                This.LabelsRef:AddSetting[LootSizeWreck, 1]
+  This.LabelsRef:AddSetting[WreckSalvage, FALSE]
+  This.LabelsRef:AddSetting[LootSizeWreck, 1]
   This.LabelsRef:AddSetting[SalvageSizeWreck, 1]
  }
 
@@ -675,11 +795,11 @@ objectdef obj_Configuration_Labels
 
  member:string RatterPointsPrefix()
  {
-         return ${This.LabelsRef.FindSetting[RatterPoints Prefix,"empty"]}
+  return ${This.LabelsRef.FindSetting[RatterPoints Prefix,"empty"]}
  }
  method SetRatterPointsPrefix(string value)
  {
-         This.LabelsRef:AddSetting[RatterPoints Prefix,${value}]
+  This.LabelsRef:AddSetting[RatterPoints Prefix,${value}]
  }
 
  member:bool RatterUseMyBook()
@@ -701,32 +821,32 @@ objectdef obj_Configuration_Labels
   BaseConfig.BaseRef:AddSet[${This.SetName}]
  }
 
-        member:string LootPrefix()
-        {
-                return ${This.LabelsRef.FindSetting[Loot Prefix,"empty"]}
-        }
-        method SetLootPrefix(string value)
-        {
-                This.LabelsRef:AddSetting[Loot Prefix,${value}]
-        }
+ member:string LootPrefix()
+ {
+  return ${This.LabelsRef.FindSetting[Loot Prefix,"empty"]}
+ }
+ method SetLootPrefix(string value)
+ {
+  This.LabelsRef:AddSetting[Loot Prefix,${value}]
+ }
 
-        member:int LootSizeWreck()
-        {
-                return ${This.LabelsRef.FindSetting[LootSizeWreck, 1]}
-        }
-        method SetLootSizeWreck(int value)
-        {
-                This.LabelsRef:AddSetting[LootSizeWreck,${value}]
-        }
+ member:int LootSizeWreck()
+ {
+  return ${This.LabelsRef.FindSetting[LootSizeWreck, 1]}
+ }
+ method SetLootSizeWreck(int value)
+ {
+  This.LabelsRef:AddSetting[LootSizeWreck,${value}]
+ }
 
-        member:int SalvageSizeWreck()
-        {
-                return ${This.LabelsRef.FindSetting[SalvageSizeWreck, 1]}
-        }
-        method SetSalvageSizeWreck(int value)
-        {
-                This.LabelsRef:AddSetting[SalvageSizeWreck,${value}]
-        }
+ member:int SalvageSizeWreck()
+ {
+  return ${This.LabelsRef.FindSetting[SalvageSizeWreck, 1]}
+ }
+ method SetSalvageSizeWreck(int value)
+ {
+  This.LabelsRef:AddSetting[SalvageSizeWreck,${value}]
+ }
 
  member:bool WreckSalvage()
  {
@@ -910,9 +1030,6 @@ objectdef obj_Configuration_Coords
   This.CoordsRef:AddSetting[AnalyzeTime, ${AnalyzeTime}]
  }
 
-
-
-
  member:string AnomalyName()
  {
   return ${This.CoordsRef.FindSetting[AnomalyName, "Type Name Here"]}
@@ -1070,8 +1187,8 @@ objectdef obj_Config_Whitelist
 
  method Shutdown()
  {
-  This:Save[]
-  LavishSettings[EVEBotWhitelist]:Clear
+;-  This:Save[]
+;-  LavishSettings[EVEBotWhitelist]:Clear
  }
 
  method Save()
@@ -1132,8 +1249,8 @@ objectdef obj_Config_Blacklist
 
  method Shutdown()
  {
-  This:Save[]
-  LavishSettings[EVEBotBlacklist]:Clear
+;-  This:Save[]
+;-  LavishSettings[EVEBotBlacklist]:Clear
  }
 
  method Save()

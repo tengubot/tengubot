@@ -60,15 +60,18 @@ objectdef obj_Combat
      {
       UI:UpdateConsole["Low Shield: ${Me.Ship.ShieldPct}. Quitting game.", LOG_CRITICAL]
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
+      wait 1000
       exit
      }
     }
@@ -79,15 +82,18 @@ objectdef obj_Combat
      {
       UI:UpdateConsole["Low Armor: ${Me.Ship.ArmorPct}. Quitting game.", LOG_CRITICAL]
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
+      wait 10
       exit
      }
     }
@@ -142,8 +148,29 @@ objectdef obj_Combat
   {
    if ${Me.ToEntity.IsWarpScrambled}
    {
-    UI:UpdateConsole["Warp Scrambled: Ignoring System Status"]
-    This.CurrentState:Set["FIGHT"]
+    if !${Config.Combat.GameOverHostileScrambled}
+    {
+     UI:UpdateConsole["Warp Scrambled: Ignoring System Status"]
+     This.CurrentState:Set["FIGHT"]
+    }
+    elseif !${Social.IsSafe}
+    {
+     UI:UpdateConsole["!!! warp scrambled while hostile !!! emergency logoff !!!"]
+ ;----- start screenshot -----
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
+ ;----- end screenshot -----
+     wait 10
+     exit
+    }
    }
    elseif (!${Social.IsSafe} || ${Social.IsPlayerMeTarget})
    {
@@ -232,6 +259,12 @@ objectdef obj_Combat
   else
   {
    call This.FleeToSafespot
+   if ${Targets.SearchBoobleTarget}
+   {
+    UI:UpdateConsole["Waiting: found bubble!!! 0_0"]
+   }
+   call Safespots.ApproachSafeSpot
+/*
    ;----------------------------------------------- модуль  ожидания ратера на споте пока враг в локале. +
    ;если в течении ожидания враг зайдет еще раз то счетчик скинется.----------------------------
    variable int sswait
@@ -260,8 +293,11 @@ objectdef obj_Combat
     }
    }
    ;------------------------------------------------------------------------------------------
+*/
   }
  }
+
+
  function FleeTank()
  {
   This.Fled:Set[TRUE]
@@ -437,11 +473,11 @@ objectdef obj_Combat
 
    if ${Config.Combat.LaunchCombatDrones}
    {
-              if !${This.Fled} && ${Ship.Drones.DronesInSpace} == 0 && !${Ship.InWarp}
-             {
+    if !${This.Fled} && ${Ship.Drones.DronesInSpace} == 0 && !${Ship.InWarp}
+    {
      wait 70
-                 Ship.Drones:LaunchAll[]
-             }
+     Ship.Drones:LaunchAll[]
+    }
    }
    elseif ${Config.Combat.LaunchDronesSpec}
    {
@@ -454,17 +490,16 @@ objectdef obj_Combat
     }
     else
     {
-       if ${Targets.PriorityTargetPresent} || ${Targets.SpecialTargetPresent} || ${Me.ToEntity.IsWarpScrambled}
-          {
-     if !${Ship.InWarp}
+     if ${Targets.PriorityTargetPresent} || ${Targets.SpecialTargetPresent} || ${Me.ToEntity.IsWarpScrambled}
+     {
+      if !${Ship.InWarp}
       {
        UI:UpdateConsole["Launch Drone Priority Target Present", LOG_CRITICAL]
        wait 70
        Ship.Drones:LaunchAll[]
       }
-       }
+     }
     }
-
    }
   }
   This:CheckTank
@@ -539,19 +574,20 @@ objectdef obj_Combat
 
   UI:UpdateConsole["Quitting in 30 sec."]
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
   wait 300
-  exit
+  EVE:Execute[CmdQuitGame]
  }
-
 }
 
 

@@ -1,27 +1,27 @@
 /*
 	Items class
-	
+
 	Object to contain members related to items.
-	
+
 	-- GliderPro
-	
+
 */
 
 /*	keep for reference
 	==================
-		
-		SELECT 
-		`typeID`, 
-		`groupID`, 
-		`typeName`, 
-		`volume`, 
-		`capacity`, 
-		`portionSize`, 
-		`basePrice`, 
+
+		SELECT
+		`typeID`,
+		`groupID`,
+		`typeName`,
+		`volume`,
+		`capacity`,
+		`portionSize`,
+		`basePrice`,
 		invTypes.marketGroupID
 		FROM `invTypes`
 		WHERE invTypes.marketGroupID IS NOT NULL
-		order by typeID	
+		order by typeID
 */
 
 /* settings file format
@@ -46,24 +46,24 @@ objectdef obj_EVEDB_Items
 
 	variable string CONFIG_FILE = "${BaseConfig.CONFIG_PATH}/EVEDB_Items.xml"
 	variable string SET_NAME = "EVEDB_Items"
-	
+
 	method Initialize()
 	{
 		LavishSettings:Import[${CONFIG_FILE}]
-		
+
 		UI:UpdateConsole["obj_EVEDB_Items: Initialized", LOG_MINOR]
 	}
-	
-	method Shutdown()	
+
+	method Shutdown()
 	{
 		LavishSettings[${This.SET_NAME}]:Clear
-	}	
-	
+	}
+
 	member:int TypeID(string itemName)
 	{
 		return ${LavishSettings[${This.SET_NAME}].FindSet[${itemName}].FindSetting[TypeID, NOTSET]}
 	}
-	
+
 	member:int GroupID(string itemName)
 	{
 		return ${LavishSettings[${This.SET_NAME}].FindSet[${itemName}].FindSetting[GroupID, NOTSET]}
@@ -78,28 +78,28 @@ objectdef obj_EVEDB_Items
 	{
 		return ${LavishSettings[${This.SET_NAME}].FindSet[${itemName}].FindSetting[Capacity, NOTSET]}
 	}
-	
+
 	member:int PortionSize(string itemName)
 	{
 		return ${LavishSettings[${This.SET_NAME}].FindSet[${itemName}].FindSetting[PortionSize, NOTSET]}
 	}
-	
+
 	member:float BasePrice(string itemName)
 	{
 		return ${LavishSettings[${This.SET_NAME}].FindSet[${itemName}].FindSetting[BasePrice, NOTSET]}
 	}
-	
+
 	member:int MarketGroupID(string itemName)
 	{
 		return ${LavishSettings[${This.SET_NAME}].FindSet[${itemName}].FindSetting[MarketGroupID, NOTSET]}
 	}
 
-	member:string Name(int TypeID)	
+	member:string Name(int TypeID)
 	{
 		variable iterator anInterator
-		
+
 		LavishSettings[${This.SET_NAME}]:GetSetIterator[anInterator]
-		
+
 		if ${anInterator:First(exists)}
 		{
 			do
@@ -111,8 +111,7 @@ objectdef obj_EVEDB_Items
 			}
 			while ${anInterator:Next(exists)}
 		}
-				
+
 		return NULL
 	}
 }
-

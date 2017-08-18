@@ -35,19 +35,21 @@
 /* Cache Objects */
 variable(global) obj_Cache_Me _Me
 variable(global) obj_Cache_EVETime _EVETime
-variable(global) bool evebot_crashed=FALSE
+variable(global) bool evebot_crashed=TRUE
 
 function atexit()
 {
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
  if ${evebot_crashed}
  {
@@ -58,100 +60,100 @@ function atexit()
 
 function main()
 {
-	;echo "${Time} EVEBot: Starting"
-	;Script:Unsquelch
-	;Script:EnableDebugLogging[debug.txt]
-	;Script:EnableProfiling
-	;Script[EVEBot]:EnableDebugLogging[debug.txt]
-	;Script[EVEBot]:EnableProfiling
+ ;echo "${Time} EVEBot: Starting"
+ ;Script:Unsquelch
+ ;Script:EnableDebugLogging[debug.txt]
+ ;Script:EnableProfiling
+ ;Script[EVEBot]:EnableDebugLogging[debug.txt]
+ ;Script[EVEBot]:EnableProfiling
 
-	while !${_Me.Name(exists)} || ${_Me.Name.Equal[NULL]} || ${_Me.Name.Length} == 0
-	{
-		echo " ${Time} EVEBot: Waiting for cache to initialize - ${_Me.Name} != ${Me.Name}"
-		wait 30
-		_Me:Initialize
-		_EVETime:Initialize
-	}
+ while !${_Me.Name(exists)} || ${_Me.Name.Equal[NULL]} || ${_Me.Name.Length} == 0
+ {
+  echo " ${Time} EVEBot: Waiting for cache to initialize - ${_Me.Name} != ${Me.Name}"
+  wait 30
+  _Me:Initialize
+  _EVETime:Initialize
+ }
 
-	echo "${Time} EVEBot: Loading Objects..."
+ echo "${Time} EVEBot: Loading Objects..."
 
-	/* Script-Defined Support Objects */
-	declarevariable EVEBot obj_EVEBot script
-	declarevariable UI obj_EVEBotUI script
-	declarevariable BaseConfig obj_Configuration_BaseConfig script
+ /* Script-Defined Support Objects */
+ declarevariable EVEBot obj_EVEBot script
+ declarevariable UI obj_EVEBotUI script
+ declarevariable BaseConfig obj_Configuration_BaseConfig script
 
-	declarevariable Config obj_Configuration script
-	declarevariable Whitelist obj_Config_Whitelist script
-	declarevariable Blacklist obj_Config_Blacklist script
-	declarevariable EVEDB_Stations obj_EVEDB_Stations script
-	declarevariable EVEDB_StationID obj_EVEDB_StationID script
-	declarevariable EVEDB_Spawns obj_EVEDB_Spawns script
-	declarevariable EVEDB_Items obj_EVEDB_Items script
+ declarevariable Config obj_Configuration script
+ declarevariable Whitelist obj_Config_Whitelist script
+ declarevariable Blacklist obj_Config_Blacklist script
+ declarevariable EVEDB_Stations obj_EVEDB_Stations script
+ declarevariable EVEDB_StationID obj_EVEDB_StationID script
+ declarevariable EVEDB_Spawns obj_EVEDB_Spawns script
+ declarevariable EVEDB_Items obj_EVEDB_Items script
 
-	/* Core Objects */
-	declarevariable Ship obj_Ship script
-	declarevariable Station obj_Station script
-	declarevariable Cargo obj_Cargo script
-	declarevariable Bookmarks obj_Bookmarks script
-	declarevariable JetCan obj_JetCan script
-	declarevariable CorpHangarArray obj_CorpHangerArray script
-	declarevariable XLargeShipAssemblyArray obj_XLargeShipAssemblyArray script
-	declarevariable Social obj_Social script
-	declarevariable Fleet obj_Fleet script
-	declarevariable Assets obj_Assets script
-	declarevariable Safespots obj_Safespots script
-	declarevariable Ratterpoints obj_Ratterpoints script
-	declarevariable Belts obj_Belts script
-	declarevariable Targets obj_Targets script
-	declarevariable Sound obj_Sound script
-    declarevariable Autopilot obj_Autopilot script
+ /* Core Objects */
+ declarevariable Ship obj_Ship script
+ declarevariable Station obj_Station script
+ declarevariable Cargo obj_Cargo script
+ declarevariable Bookmarks obj_Bookmarks script
+ declarevariable JetCan obj_JetCan script
+ declarevariable CorpHangarArray obj_CorpHangerArray script
+ declarevariable XLargeShipAssemblyArray obj_XLargeShipAssemblyArray script
+ declarevariable Social obj_Social script
+ declarevariable Fleet obj_Fleet script
+ declarevariable Assets obj_Assets script
+ declarevariable Safespots obj_Safespots script
+ declarevariable Ratterpoints obj_Ratterpoints script
+ declarevariable Belts obj_Belts script
+ declarevariable Targets obj_Targets script
+ declarevariable Sound obj_Sound script
+ declarevariable Autopilot obj_Autopilot script
 
-	/* Script-Defined Behavior Objects */
-	declarevariable BotModules index:string script
-	declarevariable Ratter obj_Ratter script
-	;declarevariable Bomzh obj_Bomzh script
+ /* Script-Defined Behavior Objects */
+ declarevariable BotModules index:string script
+ declarevariable Ratter obj_Ratter script
+ ;declarevariable Bomzh obj_Bomzh script
 
-	;echo "${Time} EVEBot: Loaded"
+ ;echo "${Time} EVEBot: Loaded"
 
-	/* Set Turbo to lowest value to try and avoid overloading the EVE Python engine */
+ /* Set Turbo to lowest value to try and avoid overloading the EVE Python engine */
 
-	variable iterator BotModule
-	BotModules:GetIterator[BotModule]
+ variable iterator BotModule
+ BotModules:GetIterator[BotModule]
 
-	variable iterator VariableIterator
-	Script[EVEBot].VariableScope:GetIterator[VariableIterator]
+ variable iterator VariableIterator
+ Script[EVEBot].VariableScope:GetIterator[VariableIterator]
 
-	;echo "Listing EVEBot Class Versions:"
+ ;echo "Listing EVEBot Class Versions:"
 
 
 
-	EVEBot:SetVersion[${VersionNum}]
+ EVEBot:SetVersion[${VersionNum}]
 
-	UI:Reload
+ UI:Reload
 
-	WindowText EVE - ${Me.Name}
+ WindowText EVE - ${Me.Name}
 
-	UI:UpdateConsole["-=Paused: Press Run-="]
-	Script:Pause
+ UI:UpdateConsole["-=Paused: Press Run-="]
+ Script:Pause
 
-	while ${EVEBot.Paused}
-	{
-		wait 10
-	}
+ while ${EVEBot.Paused}
+ {
+  wait 10
+ }
 
-	while TRUE
-	{
-		if ${BotModule:First(exists)}
-		do
-		{
-			while ${EVEBot.Paused}
-			{
-				wait 10
-			}
-			call ${BotModule.Value}.ProcessState
-			wait 10
-		}
-		while ${BotModule:Next(exists)}
-		waitframe
-	}
+ while TRUE
+ {
+  if ${BotModule:First(exists)}
+  do
+  {
+   while ${EVEBot.Paused}
+   {
+    wait 10
+   }
+   call ${BotModule.Value}.ProcessState
+   wait 10
+  }
+  while ${BotModule:Next(exists)}
+  waitframe
+ }
 }

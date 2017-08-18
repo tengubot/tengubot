@@ -1,4 +1,3 @@
-
 objectdef obj_EVEBotUI
 {
  variable string SVN_REVISION = "$Rev$"
@@ -15,6 +14,7 @@ objectdef obj_EVEBotUI
  variable bool Reloaded = FALSE
  variable queue:string ConsoleBuffer
  variable string PreviousMsg
+ variable collection:pilot pilcol
 
  method Initialize()
  {
@@ -144,9 +144,9 @@ objectdef obj_EVEBotUI
 
    for (Count:Set[1]; ${Count}<=${Indent}; Count:Inc)
    {
-      msg:Concat[" "]
-     }
-     msg:Concat["${StatusMessage}"]
+    msg:Concat[" "]
+   }
+   msg:Concat["${StatusMessage}"]
 
    if ${This.Reloaded}
    {
@@ -198,4 +198,5 @@ objectdef obj_EVEBotUI
   redirect -append "${This.StatsLogFile}" echo "--------------------------------------------------------------------------------------"
   redirect -append "${This.StatsLogFile}" echo "** ${AppVersion} starting on ${Time.Date} at ${Time.Time24}"
  }
+
 }

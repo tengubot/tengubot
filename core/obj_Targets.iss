@@ -121,7 +121,7 @@ objectdef obj_Targets
   PriorityTargets:GetIterator[PriorityTarget]
   SpecialTargets:GetIterator[SpecialTarget]
 
-         DoNotKillList:Clear
+  DoNotKillList:Clear
  }
 
  method ResetTargets()
@@ -197,34 +197,34 @@ objectdef obj_Targets
 
     if !${Target:First(exists)}
     {
-                          if ${Me.ToEntity.IsWarpScrambled}
-                          {
+     if ${Me.ToEntity.IsWarpScrambled}
+     {
       UI:UpdateConsole["Me Is Warp Scrambled! Searching targets...", LOG_CRITICAL]
-                                  EVE:GetLocalPilots[MyPilotIndex]
+      EVE:GetLocalPilots[MyPilotIndex]
       MyPilotIndex:GetIterator[MyPilotIterator]
       if ${MyPilotIterator:First(exists)}
       {
        do
        {
-           if ${MyPilotIterator.Value.ToEntity.IsTargetingMe}
-           {
-                                                         PCWar:Set[TRUE]
-                                                         HasTargets:Set[TRUE]
-                                                         HasPriorityTarget:Set[TRUE]
-        UI:UpdateConsole["Found attacker ${MyPilotIterator.Value.Name}", LOG_CRITICAL]
-        if ${Me.TargetCount} < ${Ship.MaxLockedTargets}
+        if ${MyPilotIterator.Value.ToEntity.IsTargetingMe}
         {
-                                     if !${MyPilotIterator.Value.ToEntity.IsLockedTarget} && !${MyPilotIterator.Value.ToEntity.BeingTargeted}
-                                     {
-          UI:UpdateConsole["Locking ${MyPilotIterator.Value.Name}"]
-          MyPilotIterator.Value.ToEntity:LockTarget
+         PCWar:Set[TRUE]
+         HasTargets:Set[TRUE]
+         HasPriorityTarget:Set[TRUE]
+         UI:UpdateConsole["Found attacker ${MyPilotIterator.Value.Name}", LOG_CRITICAL]
+         if ${Me.TargetCount} < ${Ship.MaxLockedTargets}
+         {
+          if !${MyPilotIterator.Value.ToEntity.IsLockedTarget} && !${MyPilotIterator.Value.ToEntity.BeingTargeted}
+          {
+           UI:UpdateConsole["Locking ${MyPilotIterator.Value.Name}"]
+           MyPilotIterator.Value.ToEntity:LockTarget
+          }
          }
         }
-           }
        }
        while ${MyPilotIterator:Next(exists)}
       }
-                                  This.MyPilotIndex:Clear
+      This.MyPilotIndex:Clear
      }
      else
      {
@@ -240,34 +240,34 @@ objectdef obj_Targets
    }
    else
    {
-                         if ${Me.ToEntity.IsWarpScrambled}
-                         {
+    if ${Me.ToEntity.IsWarpScrambled}
+    {
      UI:UpdateConsole["Me Is Warp Scrambled! Searching targets...", LOG_CRITICAL]
-                                 EVE:GetLocalPilots[MyPilotIndex]
+     EVE:GetLocalPilots[MyPilotIndex]
      MyPilotIndex:GetIterator[MyPilotIterator]
      if ${MyPilotIterator:First(exists)}
      {
       do
       {
-          if ${MyPilotIterator.Value.ToEntity.IsTargetingMe}
-          {
-                                                        PCWar:Set[TRUE]
-                                                        HasTargets:Set[TRUE]
-                                                        HasPriorityTarget:Set[TRUE]
-       UI:UpdateConsole["Found attacker ${MyPilotIterator.Value.Name}", LOG_CRITICAL]
-       if ${Me.TargetCount} < ${Ship.MaxLockedTargets}
+       if ${MyPilotIterator.Value.ToEntity.IsTargetingMe}
        {
-                                    if !${MyPilotIterator.Value.ToEntity.IsLockedTarget} && !${MyPilotIterator.Value.ToEntity.BeingTargeted}
-                                    {
-         UI:UpdateConsole["Locking ${MyPilotIterator.Value.Name}"]
-         MyPilotIterator.Value.ToEntity:LockTarget
+        PCWar:Set[TRUE]
+        HasTargets:Set[TRUE]
+        HasPriorityTarget:Set[TRUE]
+        UI:UpdateConsole["Found attacker ${MyPilotIterator.Value.Name}", LOG_CRITICAL]
+        if ${Me.TargetCount} < ${Ship.MaxLockedTargets}
+        {
+         if !${MyPilotIterator.Value.ToEntity.IsLockedTarget} && !${MyPilotIterator.Value.ToEntity.BeingTargeted}
+         {
+          UI:UpdateConsole["Locking ${MyPilotIterator.Value.Name}"]
+          MyPilotIterator.Value.ToEntity:LockTarget
+         }
         }
        }
-          }
       }
       while ${MyPilotIterator:Next(exists)}
      }
-                                 This.MyPilotIndex:Clear
+     This.MyPilotIndex:Clear
     }
     else
     {
@@ -296,62 +296,58 @@ objectdef obj_Targets
   m_PriorityTargetPresent:Set[FALSE]
   m_SpecialTargetPresent:Set[FALSE]
 
-         ; Determine the total spawn value
-        if ${Target:First(exists)} && !${This.CheckedSpawnValues}
+  ; Determine the total spawn value
+  if ${Target:First(exists)} && !${This.CheckedSpawnValues}
   {
-     This.CheckedSpawnValues:Set[TRUE]
-            do
-            {
-           variable int pos
-           variable string NPCName
-           variable string NPCGroup
-           variable string NPCShipType
-
-           NPCName:Set[${Target.Value.Name}]
-   NPCGroup:Set[${Target.Value.Group}]
-   pos:Set[1]
-          while ${NPCGroup.Token[${pos}, " "](exists)}
-          {
-    ;echo ${NPCGroup.Token[${pos}, " "]}
-           NPCShipType:Set[${NPCGroup.Token[${pos}, " "]}]
-           pos:Inc
-          }
-                 UI:UpdateConsole["NPC: ${NPCName}(${NPCShipType}) ${EVEBot.ISK_To_Str[${EVEDB_Spawns.SpawnBounty[${NPCName}]}]}"]
-
-                 ;UI:UpdateConsole["DEBUG: Type: ${Target.Value.Type}(${Target.Value.TypeID})"]
-                 ;UI:UpdateConsole["DEBUG: Category: ${Target.Value.Category}(${Target.Value.CategoryID})"]
-
-                 switch ${Target.Value.GroupID}
-                 {
-                  case GROUP_LARGECOLLIDABLEOBJECT
-                  case GROUP_LARGECOLLIDABLESHIP
-                  case GROUP_LARGECOLLIDABLESTRUCTURE
-                  case GROUP_SENTRYGUN
-                  case GROUP_CONCORDDRONE
-                  case GROUP_CUSTOMSOFFICIAL
-    case GROUP_POLICEDRONE
-                  case GROUP_CONVOYDRONE
-    case GROUP_FACTIONDRONE
-    case GROUP_BILLBOARD
-                     continue
-
-                  default
-                     break
-                 }
-   if ${NPCGroup.Find["Battleship"](exists)}
+   This.CheckedSpawnValues:Set[TRUE]
+   do
    {
-               This.TotalSpawnValue:Inc[${EVEDB_Spawns.SpawnBounty[${NPCName}]}]
-              }
-            }
-            while ${Target:Next(exists)}
-            UI:UpdateConsole["NPC: Battleship Value is ${EVEBot.ISK_To_Str[${This.TotalSpawnValue}]}"]
-         }
+    variable int pos
+    variable string NPCName
+    variable string NPCGroup
+    variable string NPCShipType
 
-         if ${This.TotalSpawnValue} >= ${Config.Combat.MinChainBounty}
-        {
-           ;UI:UpdateConsole["NPC: Spawn value exceeds minimum.  Should chain this spawn."]
-           HasChainableTarget:Set[TRUE]
-         }
+    NPCName:Set[${Target.Value.Name}]
+    NPCGroup:Set[${Target.Value.Group}]
+    pos:Set[1]
+    while ${NPCGroup.Token[${pos}, " "](exists)}
+    {
+    ;echo ${NPCGroup.Token[${pos}, " "]}
+     NPCShipType:Set[${NPCGroup.Token[${pos}, " "]}]
+     pos:Inc
+    }
+    UI:UpdateConsole["npc ${NPCName} (${NPCShipType}) ${EVEBot.ISK_To_Str[${Target.Value.Bounty}]}"]
+
+    ;UI:UpdateConsole["DEBUG: Type: ${Target.Value.Type}(${Target.Value.TypeID})"]
+    ;UI:UpdateConsole["DEBUG: Category: ${Target.Value.Category}(${Target.Value.CategoryID})"]
+
+    switch ${Target.Value.GroupID}
+    {
+     case GROUP_LARGECOLLIDABLEOBJECT
+     case GROUP_LARGECOLLIDABLESHIP
+     case GROUP_LARGECOLLIDABLESTRUCTURE
+     case GROUP_SENTRYGUN
+     case GROUP_CONCORDDRONE
+     case GROUP_CUSTOMSOFFICIAL
+     case GROUP_POLICEDRONE
+     case GROUP_CONVOYDRONE
+     case GROUP_FACTIONDRONE
+     case GROUP_BILLBOARD
+      continue
+     default
+      break
+    }
+    This.TotalSpawnValue:Inc[${Target.Value.Bounty}]
+   }
+   while ${Target:Next(exists)}
+   UI:UpdateConsole["--- total ${EVEBot.ISK_To_Str[${This.TotalSpawnValue}]}"]
+  }
+
+  if ${This.TotalSpawnValue} >= ${Config.Combat.MinChainBounty}
+  {
+   ;UI:UpdateConsole["NPC: Spawn value exceeds minimum.  Should chain this spawn."]
+   HasChainableTarget:Set[TRUE]
+  }
 
 
   if ${Target:First(exists)}
@@ -362,19 +358,19 @@ objectdef obj_Targets
    {
     switch ${Target.Value.GroupID}
     {
-      case GROUP_LARGECOLLIDABLEOBJECT
-      case GROUP_LARGECOLLIDABLESHIP
-      case GROUP_LARGECOLLIDABLESTRUCTURE
-      case GROUP_SENTRYGUN
-      case GROUP_CONCORDDRONE
-      case GROUP_CUSTOMSOFFICIAL
-      case GROUP_POLICEDRONE
-      case GROUP_CONVOYDRONE
-      case GROUP_FACTIONDRONE
-      case GROUP_BILLBOARD
-       continue
-      default
-       break
+     case GROUP_LARGECOLLIDABLEOBJECT
+     case GROUP_LARGECOLLIDABLESHIP
+     case GROUP_LARGECOLLIDABLESTRUCTURE
+     case GROUP_SENTRYGUN
+     case GROUP_CONCORDDRONE
+     case GROUP_CUSTOMSOFFICIAL
+     case GROUP_POLICEDRONE
+     case GROUP_CONVOYDRONE
+     case GROUP_FACTIONDRONE
+     case GROUP_BILLBOARD
+      continue
+     default
+      break
     }
 
     ; If the Type ID is different then there's more then 1 type in the belt
@@ -420,30 +416,29 @@ objectdef obj_Targets
 
   if ${Me.ToEntity.IsWarpScrambled} && !${m_PriorityTargetPresent}
   {
-                 if !${This.MyLock}
-                 {
+   if !${This.MyLock}
+   {
     UI:UpdateConsole["Player Me Is Warp Scrambled! Reset targets...", LOG_CRITICAL]
-                         Ship:UnlockAllTargets[]
-                         This.MyLock:Set[TRUE]
+    Ship:UnlockAllTargets[]
+    This.MyLock:Set[TRUE]
     UI:UpdateConsole["Searching targets...", LOG_CRITICAL]
-                 }
-
-             EVE:GetLocalPilots[MyPilotIndex]
+   }
+   EVE:GetLocalPilots[MyPilotIndex]
    MyPilotIndex:GetIterator[MyPilotIterator]
    if ${MyPilotIterator:First(exists)}
    {
     do
     {
      if ${MyPilotIterator.Value.ToEntity.IsTargetingMe}
-         {
-                                                PCWar:Set[TRUE]
+     {
+      PCWar:Set[TRUE]
       HasTargets:Set[TRUE]
       HasPriorityTarget:Set[TRUE]
       UI:UpdateConsole["Found attacker ${MyPilotIterator.Value.Name}", LOG_CRITICAL]
       if ${Me.TargetCount} < ${Me.Ship.MaxLockedTargets}
       {
-                                   if !${MyPilotIterator.Value.ToEntity.IsLockedTarget} && !${MyPilotIterator.Value.ToEntity.BeingTargeted}
-                                   {
+       if !${MyPilotIterator.Value.ToEntity.IsLockedTarget} && !${MyPilotIterator.Value.ToEntity.BeingTargeted}
+       {
         UI:UpdateConsole["Locking ${MyPilotIterator.Value.Name}", LOG_CRITICAL]
         MyPilotIterator.Value.ToEntity:LockTarget
        }
@@ -479,14 +474,14 @@ objectdef obj_Targets
     Chaining:Set[FALSE]
    }
 
-          if ${Chaining}
-          {
-           UI:UpdateConsole["NPC: Chaining Spawn"]
-          }
-          else
-          {
-           UI:UpdateConsole["NPC: Not Chaining Spawn"]
-          }
+   if ${Chaining}
+   {
+    UI:UpdateConsole["NPC: Chaining Spawn"]
+   }
+   else
+   {
+    UI:UpdateConsole["NPC: Not Chaining Spawn"]
+   }
    CheckChain:Set[FALSE]
   }
 
@@ -544,10 +539,10 @@ objectdef obj_Targets
    if ${Chaining}
    {
     ; We're chaining, only kill chainable spawns'
-                  if ${Target.Value.Group.Find["Battleship"](exists)}
-                  {
-                     DoTarget:Set[TRUE]
-                  }
+    if ${Target.Value.Group.Find["Battleship"](exists)}
+    {
+     DoTarget:Set[TRUE]
+    }
    }
    else
    {
@@ -555,11 +550,11 @@ objectdef obj_Targets
     DoTarget:Set[TRUE]
    }
 
-          ; override DoTarget to protect partially spawned chains
-              if ${DoNotKillList.Contains[${Target.Value.ID}]}
-          {
+   ; override DoTarget to protect partially spawned chains
+   if ${DoNotKillList.Contains[${Target.Value.ID}]}
+   {
     DoTarget:Set[FALSE]
-              }
+   }
 
    ; Do we have to target this target?
    if ${DoTarget}
@@ -600,8 +595,8 @@ objectdef obj_Targets
   }
   while ${Target:Next(exists)}
 
-
-
+/*
+ненужная хуита, переделать если буду фармить махой
   if ${HasTargets}
   {
    if (!${Config.Combat.FullDeactivateOrbit})
@@ -654,6 +649,8 @@ objectdef obj_Targets
     }
    }
   }
+*/
+
   return ${HasTargets}
  }
 
@@ -733,28 +730,26 @@ objectdef obj_Targets
    TypeID:Set[${Target.Value.TypeID}]
    do
    {
-           switch ${Target.Value.GroupID}
-              {
-                   case GROUP_LARGECOLLIDABLEOBJECT
-                   case GROUP_LARGECOLLIDABLESHIP
-                 case GROUP_LARGECOLLIDABLESTRUCTURE
-                   case GROUP_SENTRYGUN
-                case GROUP_CONCORDDRONE
-                   case GROUP_CUSTOMSOFFICIAL
-                   case GROUP_POLICEDRONE
-                         case GROUP_CONVOYDRONE
-                case GROUP_FACTIONDRONE
-                case GROUP_BILLBOARD
-                      continue
-
+    switch ${Target.Value.GroupID}
+    {
+     case GROUP_LARGECOLLIDABLEOBJECT
+     case GROUP_LARGECOLLIDABLESHIP
+     case GROUP_LARGECOLLIDABLESTRUCTURE
+     case GROUP_SENTRYGUN
+     case GROUP_CONCORDDRONE
+     case GROUP_CUSTOMSOFFICIAL
+     case GROUP_POLICEDRONE
+     case GROUP_CONVOYDRONE
+     case GROUP_FACTIONDRONE
+     case GROUP_BILLBOARD
+      continue
      default
-            break
-           }
-
+      break
+    }
     if ${This.IsPriorityTarget[${Target.Value.Name}]}
     {
-                    return TRUE
-                    break
+     return TRUE
+     break
     }
    }
    while ${Target:Next(exists)}
@@ -781,26 +776,24 @@ objectdef obj_Targets
    TypeID:Set[${Target.Value.TypeID}]
    do
    {
-           switch ${Target.Value.GroupID}
-              {
-                   case GROUP_LARGECOLLIDABLEOBJECT
-                   case GROUP_LARGECOLLIDABLESHIP
-                 case GROUP_LARGECOLLIDABLESTRUCTURE
-                   case GROUP_SENTRYGUN
-                case GROUP_CONCORDDRONE
-                   case GROUP_CUSTOMSOFFICIAL
-                   case GROUP_POLICEDRONE
-                         case GROUP_CONVOYDRONE
-                case GROUP_FACTIONDRONE
-                case GROUP_BILLBOARD
-                      continue
-
+    switch ${Target.Value.GroupID}
+    {
+     case GROUP_LARGECOLLIDABLEOBJECT
+     case GROUP_LARGECOLLIDABLESHIP
+     case GROUP_LARGECOLLIDABLESTRUCTURE
+     case GROUP_SENTRYGUN
+     case GROUP_CONCORDDRONE
+     case GROUP_CUSTOMSOFFICIAL
+     case GROUP_POLICEDRONE
+     case GROUP_CONVOYDRONE
+     case GROUP_FACTIONDRONE
+     case GROUP_BILLBOARD
+      continue
      default
-            break
-           }
-
-                                        return TRUE
-                                        break
+      break
+    }
+    return TRUE
+    break
    }
    while ${Target:Next(exists)}
   }
@@ -827,37 +820,32 @@ objectdef obj_Targets
    TypeID:Set[${Target.Value.TypeID}]
    do
    {
-           switch ${Target.Value.GroupID}
-              {
-                   case GROUP_LARGECOLLIDABLEOBJECT
-                   case GROUP_LARGECOLLIDABLESHIP
-                 case GROUP_LARGECOLLIDABLESTRUCTURE
-                   case GROUP_SENTRYGUN
-                case GROUP_CONCORDDRONE
-                   case GROUP_CUSTOMSOFFICIAL
-                   case GROUP_POLICEDRONE
-                         case GROUP_CONVOYDRONE
-                case GROUP_FACTIONDRONE
-                case GROUP_BILLBOARD
-                      continue
-
+    switch ${Target.Value.GroupID}
+    {
+     case GROUP_LARGECOLLIDABLEOBJECT
+     case GROUP_LARGECOLLIDABLESHIP
+     case GROUP_LARGECOLLIDABLESTRUCTURE
+     case GROUP_SENTRYGUN
+     case GROUP_CONCORDDRONE
+     case GROUP_CUSTOMSOFFICIAL
+     case GROUP_POLICEDRONE
+     case GROUP_CONVOYDRONE
+     case GROUP_FACTIONDRONE
+     case GROUP_BILLBOARD
+      continue
      default
-            break
-           }
-
+      break
+    }
     if ${This.IsPriorityTarget[${Target.Value.Name}]}
     {
-                                        return TRUE
-                                        break
+     return TRUE
+     break
     }
    }
    while ${Target:Next(exists)}
   }
   return FALSE
  }
-
-
-
 
  member:bool myPC()
  {
@@ -871,88 +859,72 @@ objectdef obj_Targets
   do
   {
    if ${tgtIterator.Value.Owner.CharID} != ${Me.CharID}
-
    {
     if ${tgtIterator.Value.Owner.Name.Equal["LoveLu"]}
-
     {
-        /* A player is already present here ! */
+     /* A player is already present here ! */
 ;     UI:UpdateConsole["Player found ${tgtIterator.Value.Owner}"]
      return TRUE
     }
-     }
+   }
   }
   while ${tgtIterator:Next(exists)}
-
   ; No other players around
   return FALSE
  }
 
-
-
 ;================================================================================================================
  member:bool SearchBoobleTarget()
  {
-                variable index:entity BubbleTargets
-
-                BubbleTargets:Clear
-          EVE:QueryEntities[BubbleTargets, "GroupID = GROUP_MOBILEWARPDISRUPTOR && Distance <= 400000"]
-
-                if ${BubbleTargets.Used} > 0
-                {
-                        return TRUE
-                }
-                return FALSE
+  variable index:entity BubbleTargets
+  BubbleTargets:Clear
+  EVE:QueryEntities[BubbleTargets, "GroupID = GROUP_MOBILEWARPDISRUPTOR && Distance <= 400000"]
+  if ${BubbleTargets.Used} > 0
+  {
+   return TRUE
+  }
+  return FALSE
  }
 ;==================================================================================================================
  member:bool HaveAllAggro()
  {
-
-
-          variable int pos
-          variable string NPCName2
-          variable string NPCGroup2
-          variable string NPCShipType2
-          variable index:entity Targets2
-      variable iterator Target2
-          Targets2:Clear
-          ;EVE:QueryEntities[Targets2, CategoryID, CATEGORYID_ENTITY, radius, 250000]
-      EVE:QueryEntities[Targets2, "CategoryID = CATEGORYID_ENTITY && Distance <= 250000"]
-   Targets2:GetIterator[Target2]
-          ; echo ====== 2${Target2.Value.Name}
-          ;UI:UpdateConsole["ship named ${Target2.Value.Name}."]
-      do
-         {
-            switch ${Target2.Value.GroupID}
-            {
-          case GROUP_LARGECOLLIDABLESHIP
-               case GROUP_LARGECOLLIDABLESTRUCTURE
-               case GROUP_SENTRYGUN
-               case GROUP_CONCORDDRONE
-               case GROUP_CUSTOMSOFFICIAL
-               case GROUP_POLICEDRONE
-               case GROUP_CONVOYDRONE
-      case GROUP_FACTIONDRONE
-      case GROUP_BILLBOARD
-
-                  continue
-
-               default
-                  break
-            }
-             ;echo ${Target2.Value.Name}
-    ;UI:UpdateConsole["ship named ${Target2.Value.Name}."]
-
-
+  variable int pos
+  variable string NPCName2
+  variable string NPCGroup2
+  variable string NPCShipType2
+  variable index:entity Targets2
+  variable iterator Target2
+  Targets2:Clear
+  ;EVE:QueryEntities[Targets2, CategoryID, CATEGORYID_ENTITY, radius, 250000]
+  EVE:QueryEntities[Targets2, "CategoryID = CATEGORYID_ENTITY && Distance <= 250000"]
+  Targets2:GetIterator[Target2]
+  ; echo ====== 2${Target2.Value.Name}
+  ;UI:UpdateConsole["ship named ${Target2.Value.Name}."]
+  do
+  {
+   switch ${Target2.Value.GroupID}
+   {
+    case GROUP_LARGECOLLIDABLESHIP
+    case GROUP_LARGECOLLIDABLESTRUCTURE
+    case GROUP_SENTRYGUN
+    case GROUP_CONCORDDRONE
+    case GROUP_CUSTOMSOFFICIAL
+    case GROUP_POLICEDRONE
+    case GROUP_CONVOYDRONE
+    case GROUP_FACTIONDRONE
+    case GROUP_BILLBOARD
+     continue
+    default
+     break
+   }
+   ;echo ${Target2.Value.Name}
+   ;UI:UpdateConsole["ship named ${Target2.Value.Name}."]
    if !${Target2.Value.IsTargetingMe}
    {
-     return FALSE
-      }
-         }
-         while ${Target2:Next(exists)}
-
-   return TRUE
-
+    return FALSE
+   }
+  }
+  while ${Target2:Next(exists)}
+  return TRUE
  }
-
 }

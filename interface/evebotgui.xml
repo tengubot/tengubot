@@ -16,6 +16,10 @@
    <Border>0</Border>
    <Children>
     <commandbutton name='Run EVEBot' template='EVESkin.Window.TitleBar.RunButton'>
+     <X>0</X>
+     <Y>0</Y>
+     <Width>46</Width>
+     <Height>20</Height>
      <OnLeftClick>
       Script[EVEBot]:Resume
       Script[EVEBot].VariableScope.EVEBot:Resume
@@ -23,6 +27,10 @@
      </OnLeftClick>
     </commandbutton>
     <commandbutton name='Pause EVEBot' template='EVESkin.Window.TitleBar.PauseButton'>
+     <X>47</X>
+     <Y>0</Y>
+     <Width>46</Width>
+     <Height>20</Height>
      <OnLeftClick>
       EVE:Execute[CmdStopShip]
       Script[EVEBot]:Pause
@@ -31,13 +39,32 @@
      </OnLeftClick>
     </commandbutton>
     <text name='EVEBot_TitleBar_Title' template='EVESkin.Font.TitleBar'>
-     <X>200</X>
+     <X>230</X>
      <Y>8</Y>
      <Width>170</Width>
      <Height>20</Height>
-     <Text>EVEBot Stable Vorc...v.1.2</Text>
+     <Text>vorcbot 20120916</Text>
     </text>
+    <button Name='SaveSettings' template='EveSkin.Window.ClickButton'>
+     <X>r73</X>
+     <Y>2</Y>
+     <Width>33</Width>
+     <Height>16</Height>
+     <text>save</text>
+     <AutoTooltip>   save bot settings for current character</AutoTooltip>
+     <OnLeftClick>
+      Script[EVEBot].VariableScope.UI:UpdateConsole["saving settings..."]
+      Script[EVEBot].VariableScope.Config:Save[]
+      Script[EVEBot].VariableScope.Blacklist:Save[]
+      Script[EVEBot].VariableScope.Whitelist:Save[]
+      Script[EVEBot].VariableScope.UI:UpdateConsole["... settings saved"]
+     </OnLeftClick>
+    </button>
     <button Name='Minimize' template='EVESkin.Window.TitleBar.Minimize'>
+     <X>r40</X>
+     <Y>0</Y>
+     <Width>20</Width>
+     <Height>20</Height>
      <OnLeftClick>
       UIElement[EVEBot].FindUsableChild[TitleBotStatus,text]:Show
       UIElement[EVEBot].FindUsableChild[TitleBotStatusCap,text]:Show
@@ -46,6 +73,10 @@
      </OnLeftClick>
     </button>
     <button Name='Maximize' template='EVESkin.Window.TitleBar.Minimize'>
+     <X>r40</X>
+     <Y>0</Y>
+     <Width>20</Width>
+     <Height>20</Height>
      <OnLeftClick>
       UIElement[EVEBot].FindUsableChild[TitleBotStatus,text]:Hide
       UIElement[EVEBot].FindUsableChild[TitleBotXPStatus,text]:Hide
@@ -54,8 +85,12 @@
      </OnLeftClick>
     </button>
     <button Name='Close' template='EVESkin.Window.TitleBar.Close'>
+     <X>r20</X>
+     <Y>0</Y>
+     <Width>20</Width>
+     <Height>20</Height>
      <OnLeftClick>
-          evebot_crashed:Set[FALSE]
+      evebot_crashed:Set[FALSE]
       endscript EVEBot
      </OnLeftClick>
     </button>
@@ -68,49 +103,48 @@
    </button>
    <TabControl Name='EVEBotOptionsTab' template='EVESkin.TabControl'>
     <X>0</X>
-    <Y>8</Y>
+    <Y>7</Y>
     <Width>100%</Width>
     <Height>100%</Height>
     <Tabs>
-     <Tab Name='Status'>
-       <text name='script_runtime'>
-        <X>10</X>
-        <Y>10</Y>
+     <Tab Name='status'>
+       <text name='script_runtime' template='EVESkin.Font.Description'>
+        <X>100</X>
+        <Y>7</Y>
         <Width>115</Width>
         <Height>20</Height>
-        <Text>Script Runtime:</Text>
+        <Text>runtime:</Text>
        </text>
-       <Text name='script_runtime_data' template='EVESkin.Font.Value'>
-        <X>150</X>
-        <Y>10</Y>
+       <Text name='script_runtime_data' template='EVESkin.Font.Description'>
+        <X>140</X>
+        <Y>7</Y>
         <Width>100</Width>
         <Height>20</Height>
         <Text>${Script[EVEBot].VariableScope.UI.Runtime}</Text>
        </Text>
-
        <text name='state' template='EVESkin.Font.Description'>
         <X>10</X>
-        <Y>30</Y>
+        <Y>7</Y>
         <Width>100</Width>
         <Height>20</Height>
-        <Text>Action:</Text>
+        <Text>action:</Text>
        </text>
-       <text name='state_data' template='EVESkin.Font.Value'>
-        <X>150</X>
-        <Y>30</Y>
+       <text name='state_data' template='EVESkin.Font.Description'>
+        <X>40</X>
+        <Y>7</Y>
         <Width>100</Width>
         <Height>20</Height>
         <text>${Script[EVEBot].VariableScope.Config.Common.BotModeName}</text>
        </text>
        <console Name="StatusConsole" template='EVESkin.Console'>
         <X>5</X>
-        <Y>r280</Y>
-        <Width>97.5%</Width>
-        <Height>270</Height>
+        <Y>17</Y>
+        <Width>491</Width>
+        <Height>317</Height>
        </console>
      </Tab>
 
-     <Tab Name='Main'>
+     <Tab Name='main'>
       <Text name='EVEBotModeLabel'>
        <X>10</X>
        <Y>20</Y>
@@ -291,88 +325,7 @@
 
 
 
-     <Tab name='Combat'>
-
-      <slider name='MinShieldPct'>
-       <X>10</X>
-       <Y>10</Y>
-       <Width>40</Width>
-       <Height>18</Height>
-       <Range>100</Range>
-       <OnLoad>
-        This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.MinimumShieldPct}]
-        UIElement[MinShieldPctLabel@Combat@EvEBotOptionsTab@EVEBot]:SetText["Minimum Shield: ${This.Value}"]
-       </OnLoad>
-       <OnChange>
-        Script[EVEBot].VariableScope.Config.Combat:SetMinimumShieldPct[${Int[${This.Value}]}]
-        UIElement[MinShieldPctLabel@Combat@EvEBotOptionsTab@EVEBot]:SetText["Minimum Shield: ${This.Value}"]
-       </OnChange>
-      </slider>
-      <Text name='MinShieldPctLabel'>
-       <X>55</X>
-       <Y>12</Y>
-       <Width>150</Width>
-       <Height>10</Height>
-       <Text>Minimum Shield: 0</Text>
-       <AutoTooltip>Lowest Shield Pct Allowed before Running</AutoTooltip>
-       <OnLoad>
-        This:SetText["Minimum Shield: ${UIElement[MinShieldPct@Combat@EvEBotOptionsTab@EVEBot].Value}"]
-       </OnLoad>
-      </Text>
-
-      <slider name='MinArmorPct'>
-       <X>10</X>
-       <Y>30</Y>
-       <Width>40</Width>
-       <Height>18</Height>
-       <Range>100</Range>
-       <OnLoad>
-        This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.MinimumArmorPct}]
-        UIElement[MinArmorPctLabel@Combat@EvEBotOptionsTab@EVEBot]:SetText["Minimum Armor: ${This.Value}"]
-       </OnLoad>
-       <OnChange>
-        Script[EVEBot].VariableScope.Config.Combat:SetMinimumArmorPct[${Int[${This.Value}]}]
-        UIElement[MinArmorPctLabel@Combat@EvEBotOptionsTab@EVEBot]:SetText["Minimum Armor: ${This.Value}"]
-       </OnChange>
-      </slider>
-      <Text name='MinArmorPctLabel'>
-       <X>55</X>
-       <Y>32</Y>
-       <Width>150</Width>
-       <Height>10</Height>
-       <Text>Minimum Armor: 0</Text>
-       <AutoTooltip>Lowest armor percent allowed before fleeing</AutoTooltip>
-       <OnLoad>
-        This:SetText["Minimum Armor: ${UIElement[MinArmorPct@Combat@EvEBotOptionsTab@EVEBot].Value}"]
-       </OnLoad>
-      </Text>
-
-      <slider name='MinCapPct'>
-       <X>10</X>
-       <Y>50</Y>
-       <Width>40</Width>
-       <Height>18</Height>
-       <Range>100</Range>
-       <OnLoad>
-        This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.MinimumCapPct}]
-        UIElement[MinCapPctLabel@Combat@EvEBotOptionsTab@EVEBot]:SetText["Minimum Cap: ${This.Value}"]
-       </OnLoad>
-       <OnChange>
-        Script[EVEBot].VariableScope.Config.Combat:SetMinimumCapPct[${Int[${This.Value}]}]
-        UIElement[MinCapPctLabel@Combat@EvEBotOptionsTab@EVEBot]:SetText["Minimum Cap: ${This.Value}"]
-       </OnChange>
-      </slider>
-      <Text name='MinCapPctLabel'>
-       <X>55</X>
-       <Y>52</Y>
-       <Width>150</Width>
-       <Height>10</Height>
-       <Text>Minimum Cap: 0</Text>
-       <AutoTooltip>Lowest capacitor percent allowed before fleeing</AutoTooltip>
-       <OnLoad>
-        This:SetText["Minimum Cap: ${UIElement[MinCapPct@Combat@EvEBotOptionsTab@EVEBot].Value}"]
-       </OnLoad>
-      </Text>
+     <Tab name='combat'>
 
       <Frame name='frmDefenceOptions'>
        <X>5</X>
@@ -381,147 +334,6 @@
        <Width>48%</Width>
        <Border>1</Border>
        <Children>
-
-        <checkbox name='cbAlwaysShieldBoost'>
-         <X>10</X>
-         <Y>70</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Always Shield Boost</text>
-         <AutoTooltip>Turn Shield Booster on full-time, instead of on-demand.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.AlwaysShieldBoost}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetAlwaysShieldBoost[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <checkbox name='cbAlwaysArmorBoost'>
-         <X>10</X>
-         <Y>90</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Always Armor Boost</text>
-         <AutoTooltip>Turn Armor Booster on full-time, instead of on-demand.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.AlwaysArmorBoost}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetAlwaysArmorBoost[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <checkbox name='cbRunOnLowCap'>
-         <X>10</X>
-         <Y>110</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Run Safe On Low Cap</text>
-         <AutoTooltip>If checked, run to safe spot when capacitor is empty.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.RunOnLowCap}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-           Script[EVEBot].VariableScope.Config.Combat:SetRunOnLowCap[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-        <checkbox name='cbRunOnLowTank'>
-         <X>10</X>
-         <Y>130</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Run Safe On Low Tank</text>
-         <AutoTooltip>If checked, run to safe spot when tank (shield or armor) has failed.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.RunOnLowTank}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-           Script[EVEBot].VariableScope.Config.Combat:SetRunOnLowTank[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-        <checkbox name='cbGameOverShield'>
-         <X>10</X>
-         <Y>150</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>GameOver : Min.Shield:</text>
-         <AutoTooltip>If checked, use exit from EVE.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.GameOverShield}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetGameOverShield[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <Textentry name='tbGameOverShieldTrashHold'>
-         <X>160</X>
-         <Y>150</Y>
-         <Width>25</Width>
-         <Height>18</Height>
-         <MaxLength>3</MaxLength>
-         <OnLoad>
-          This:SetText[${Script[EVEBot].VariableScope.Config.Combat.GameOverShieldTrashHold}]
-         </OnLoad>
-         <OnChange>
-          if ${This.Text.Length} > 0
-          {
-           Script[EVEBot].VariableScope.Config.Combat:SetGameOverShieldTrashHold[${Int[${This.Text}]}]
-          }
-         </OnChange>
-        </Textentry>
-
-        <checkbox name='cbGameOverArmor'>
-         <X>10</X>
-         <Y>170</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>GameOver : Min.Armor:</text>
-         <AutoTooltip>If checked, use exit from EVE.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.GameOverArmor}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetGameOverArmor[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <Textentry name='tbGameOverArmorTrashHold'>
-         <X>160</X>
-         <Y>170</Y>
-         <Width>25</Width>
-         <Height>18</Height>
-         <MaxLength>3</MaxLength>
-         <OnLoad>
-          This:SetText[${Script[EVEBot].VariableScope.Config.Combat.GameOverArmorTrashHold}]
-         </OnLoad>
-         <OnChange>
-          if ${This.Text.Length} > 0
-          {
-           Script[EVEBot].VariableScope.Config.Combat:SetGameOverArmorTrashHold[${Int[${This.Text}]}]
-          }
-         </OnChange>
-        </Textentry>
-
        </Children>
       </Frame>
 
@@ -532,155 +344,6 @@
        <Width>49%</Width>
        <Border>1</Border>
        <Children>
-        <checkbox name='cbRunToStation'>
-         <X>10</X>
-         <Y>10</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Run To Station</text>
-         <AutoTooltip>If checked, run to a station instead of a safe-spot.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.RunToStation}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-           Script[EVEBot].VariableScope.Config.Combat:SetRunToStation[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-        <checkbox name='cbUseWhiteList'>
-         <X>10</X>
-         <Y>30</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Run Safe On Non-Whitelisted Pilot</text>
-         <AutoTooltip>If checked, run to safe spot when any non-whitelisted pilot enters system.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.UseWhiteList}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-           Script[EVEBot].VariableScope.Config.Combat:SetUseWhiteList[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <checkbox name='cbUseBlackList'>
-         <X>10</X>
-         <Y>50</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Run Safe On Blacklisted Pilot</text>
-         <AutoTooltip>If checked, run to safe spot when any blacklisted pilot enters system.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.UseBlackList}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-           Script[EVEBot].VariableScope.Config.Combat:SetUseBlackList[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <checkbox name='cbGameOverBlackList'>
-         <X>10</X>
-         <Y>70</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>GameOver : User in black list</text>
-         <AutoTooltip>If checked, use exit from EVE.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.GameOverBlackList}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetGameOverBlackList[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-        <checkbox name='cbMySingleLocal'>
-         <X>10</X>
-         <Y>90</Y>
-         <Height>20</Height>
-         <Width>100</Width>
-         <Text>Single in location</text>
-         <AutoTooltip>Will warp to next book if found PC.</AutoTooltip>
-         <OnLoad>
-          if ${Script[EVEBot].VariableScope.Config.Combat.MySingleLocal}
-          {
-           This:SetChecked
-          }
-         </OnLoad>
-         <OnLeftClick>
-          Script[EVEBot].VariableScope.Config.Combat:SetMySingleLocal[${This.Checked}]
-         </OnLeftClick>
-        </checkbox>
-
-
-        <Text name='MarkerRegionText'>
-         <X>10</X>
-         <Y>130</Y>
-         <Width>200</Width>
-         <Height>10</Height>
-         <Text>War Region:</Text>
-         <AutoTooltip>Use region</AutoTooltip>
-        </Text>
-
-        <combobox name='MyWarRegion'>
-         <X>120</X>
-         <Y>128</Y>
-         <Width>115</Width>
-         <Height>15</Height>
-         <FullHeight>90</FullHeight>
-         <ButtonWidth>18</ButtonWidth>
-         <Items>
-          <Item Value='1'>Drones</Item>
-          <Item Value='2'>Angel</Item>
-          <Item Value='3'>Guristas</Item>
-          <Item Value='4'>Sansha</Item>
-         </Items>
-         <OnSelect>
-          Script[EVEBot].VariableScope.Config.Combat:SetMyWarRegion[${This.SelectedItem.Value}]
-         </OnSelect>
-         <OnLoad>
-          This:SetSelection[${Script[EVEBot].VariableScope.Config.Combat.MyWarRegion}]
-         </OnLoad>
-        </combobox>
-
-        <Text name='WaitSecSafeText'>
-         <X>10</X>
-         <Y>150</Y>
-         <Width>200</Width>
-         <Height>10</Height>
-         <Text>Waiting Safe:</Text>
-         <AutoTooltip>Waiting time a protected area</AutoTooltip>
-        </Text>
-
-        <combobox name='WaitSecSafe'>
-         <X>120</X>
-         <Y>148</Y>
-         <Width>115</Width>
-         <Height>15</Height>
-         <FullHeight>90</FullHeight>
-         <ButtonWidth>18</ButtonWidth>
-         <Items>
-          <Item Value='1'>2 min</Item>
-          <Item Value='2'>4 min</Item>
-          <Item Value='3'>6 min</Item>
-          <Item Value='4'>8 min</Item>
-         </Items>
-         <OnSelect>
-          Script[EVEBot].VariableScope.Config.Combat:SetWaitSecSafe[${This.SelectedItem.Value}]
-         </OnSelect>
-         <OnLoad>
-          This:SetSelection[${Script[EVEBot].VariableScope.Config.Combat.WaitSecSafe}]
-         </OnLoad>
-        </combobox>
        </Children>
       </Frame>
 
@@ -699,7 +362,6 @@
          <Text>Ratter Ship:</Text>
          <AutoTooltip>Installation of the orbit for the ships</AutoTooltip>
         </Text>
-
         <combobox name='MyOrbitRange'>
          <X>120</X>
          <Y>8</Y>
@@ -726,7 +388,7 @@
          <Y>30</Y>
          <Height>20</Height>
          <Width>100</Width>
-         <Text>Disable MWD in orbit</text>
+         <Text>Disable MWD in orbit</Text>
          <AutoTooltip>If checked, use disable MWD.</AutoTooltip>
          <OnLoad>
           if ${Script[EVEBot].VariableScope.Config.Combat.DeactivateMWD}
@@ -744,7 +406,7 @@
          <Y>50</Y>
          <Height>20</Height>
          <Width>100</Width>
-         <Text>Full disable fly orbit</text>
+         <Text>Full disable fly orbit</Text>
          <AutoTooltip>If checked, use disable orbit fly.</AutoTooltip>
          <OnLoad>
           if ${Script[EVEBot].VariableScope.Config.Combat.FullDeactivateOrbit}
@@ -763,7 +425,7 @@
          <Y>70</Y>
          <Height>20</Height>
          <Width>130</Width>
-         <Text>Launch Drones for any targets</text>
+         <Text>Launch Drones for any targets</Text>
          <AutoTooltip>Launch and Use Combat Drones</AutoTooltip>
          <OnLoad>
           if ${Script[EVEBot].VariableScope.Config.Combat.LaunchCombatDrones}
@@ -781,7 +443,7 @@
          <Y>90</Y>
          <Height>20</Height>
          <Width>130</Width>
-         <Text>Combat Drones for Spec Targets</text>
+         <Text>Combat Drones for Spec Targets</Text>
          <AutoTooltip>Launch and Use Combat Drones ONLY FOR SPECIAL TARGETs!</AutoTooltip>
          <OnLoad>
           if ${Script[EVEBot].VariableScope.Config.Combat.LaunchDronesSpec}
@@ -799,7 +461,7 @@
          <Y>10</Y>
          <Height>20</Height>
          <Width>100</Width>
-         <Text>Chain Spawns</text>
+         <Text>Chain Spawns</Text>
          <AutoTooltip>Will chain high value spawns if checked</AutoTooltip>
          <OnLoad>
           if ${Script[EVEBot].VariableScope.Config.Combat.ChainSpawns}
@@ -816,7 +478,7 @@
          <Y>30</Y>
          <Height>20</Height>
          <Width>100</Width>
-         <Text>Chain Spawns (while alone)</text>
+         <Text>Chain Spawns (while alone)</Text>
          <AutoTooltip>If not checked chaining will be suspended if you are alone in a system.</AutoTooltip>
          <OnLoad>
           if ${Script[EVEBot].VariableScope.Config.Combat.ChainSolo}
@@ -881,13 +543,13 @@
 
        </Children>
       </Frame>
-     </tab>
+     </Tab>
 
 
 
 
 
-     <tab name='Labels'>
+     <tab name='labels'>
 
       <Text name='Label1'>
        <X>10</X>
@@ -962,7 +624,7 @@
        <Y>72</Y>
        <Width>200</Width>
        <Height>10</Height>
-       <Text>Allowed anomalies list:</Text>
+       <Text>allowed anomalies list:</Text>
       </Text>
       <TextEntry name='tbAddAllowedAnomaly'>
        <X>10</X>
@@ -970,7 +632,7 @@
        <Width>220</Width>
        <Height>18</Height>
        <MaxLength>50</MaxLength>
-      </Textentry>
+      </TextEntry>
       <button Name='AddAllowedAnomaly' template='EVEskin.Add.Texture'>
        <X>232</X>
        <Y>86</Y>
@@ -1225,7 +887,7 @@
 
 
 ;_____________________________________________________________________________________________________ TAB  COORDS   --=START=--________________________________________________________________________
-     <tab name='Cords'>
+     <tab name='cords'>
       <Text name='Coordstitle'>
        <X>10</X>
        <Y>10</Y>
@@ -1396,7 +1058,7 @@
        <Y>40</Y>
        <Width>100</Width>
        <Height>10</Height>
-       <Text>sh m arr</Text>
+       <Text>ship maint arr</Text>
        <AutoTooltip>      X : Y coordinates of ship maintenance array</AutoTooltip>
       </Text>
       <Textentry name='FirstProbebuttonX'>
@@ -1666,7 +1328,7 @@
        <Y>140</Y>
        <Height>20</Height>
        <Width>100</Width>
-       <Text>Orbiting</text>
+       <Text>Orbiting</Text>
        <AutoTooltip>   Orbit Center of Anomaly?</AutoTooltip>
        <OnLoad>
         if ${Script[EVEBot].VariableScope.Config.Coords.OrbitAnomaly}
@@ -1712,7 +1374,7 @@
        <Y>100</Y>
        <Height>20</Height>
        <Width>100</Width>
-       <Text>AmmoReload</text>
+       <Text>AmmoReload</Text>
        <AutoTooltip>   Relaod ammo from POS?</AutoTooltip>
        <OnLoad>
         if ${Script[EVEBot].VariableScope.Config.Coords.AmmoReload}
@@ -1750,7 +1412,7 @@
        <Y>160</Y>
        <Height>20</Height>
        <Width>50</Width>
-       <Text>Support?</text>
+       <Text>Support?</Text>
        <AutoTooltip>   Work As Support</AutoTooltip>
        <OnLoad>
         if ${Script[EVEBot].VariableScope.Config.Coords.Support}
@@ -1790,7 +1452,7 @@
        <Y>180</Y>
        <Height>20</Height>
        <Width>50</Width>
-       <Text>Station</text>
+       <Text>Station</Text>
        <AutoTooltip>  Do Sanctum With Station</AutoTooltip>
        <OnLoad>
         if ${Script[EVEBot].VariableScope.Config.Coords.Sanctum1}
@@ -1808,7 +1470,7 @@
        <Y>200</Y>
        <Height>20</Height>
        <Width>50</Width>
-       <Text>Rings</text>
+       <Text>Rings</Text>
        <AutoTooltip>  Do Sanctum With Rings</AutoTooltip>
        <OnLoad>
         if ${Script[EVEBot].VariableScope.Config.Coords.Sanctum2}
@@ -1885,9 +1547,1311 @@
       </Textentry>
 
      </tab>
-;--------------------------------------------------------------------------------------------------------------------------------------------------TAB COORDS  --= END =-- ----------------------------------------------------------------------------------------------------------------------
+;-------------------------TAB COORDS  --= END =-- ---------------------------
+
+
+
+     <Tab name='fleeing'>
+      <TabControl Name='FleeingTabcontrol' template='EVESkin.TabControl'>
+       <x>0</x>
+       <y>0</y>
+       <width>100%</width>
+       <height>100%</height>
+       <Tabs>
+        <Tab name='options'>
+         <frame name='FleeingFrame'>
+          <x>0</x>
+          <y>0</y>
+          <width>100%</width>
+          <height>100%</height>
+          <children>
+           <checkbox name='cbRunOnLowAmmo'>
+            <X>10</X>
+            <Y>10</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>run on low ammo</Text>
+            <AutoTooltip>If checked, run to safe spot when low on ammo.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.RunOnLowAmmo}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetRunOnLowAmmo[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbRunOnLowCap'>
+            <X>10</X>
+            <Y>30</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>run on low cap</Text>
+            <AutoTooltip>If checked, run to safe spot when capacitor is empty.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.RunOnLowCap}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetRunOnLowCap[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbRunOnLowTank'>
+            <X>10</X>
+            <Y>50</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>run on low tank</Text>
+            <AutoTooltip>If checked, run to safe spot when tank (shield or armor) has failed.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.RunOnLowTank}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetRunOnLowTank[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbRunToStation'>
+            <X>10</X>
+            <Y>70</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>run to station</Text>
+            <AutoTooltip>If checked, run to a station instead of a safe-spot.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.RunToStation}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetRunToStation[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbUseBlackList'>
+            <X>10</X>
+            <Y>90</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>use blacklist</Text>
+            <AutoTooltip>If checked, run to safe spot when any blacklisted pilot enters system.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.UseBlackList}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetUseBlackList[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbUseWhiteList'>
+            <X>10</X>
+            <Y>110</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>use whitelist</Text>
+            <AutoTooltip>If checked, run to safe spot when any non-whitelisted pilot enters system.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.UseWhiteList}
+             {
+              UIElement[EVEBot].FindUsableChild[cbUseStandings,checkbox]:UnsetChecked
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             if ${This.Checked}
+             {
+              UIElement[EVEBot].FindUsableChild[cbUseStandings,checkbox]:UnsetChecked
+              Script[EVEBot].VariableScope.Config.Combat:SetUseStandings[!${This.Checked}]
+             }
+             Script[EVEBot].VariableScope.Config.Combat:SetUseWhiteList[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbUseStandings'>
+            <X>10</X>
+            <Y>130</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>use standings</Text>
+            <AutoTooltip>If checked, run to safe spot when pilot with standing zero or lower enters system.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.UseStandings}
+             {
+              UIElement[EVEBot].FindUsableChild[cbUseWhiteList,checkbox]:UnsetChecked
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             if ${This.Checked}
+             {
+              UIElement[EVEBot].FindUsableChild[cbUseWhiteList,checkbox]:UnsetChecked
+              Script[EVEBot].VariableScope.Config.Combat:SetUseWhiteList[!${This.Checked}]
+             }
+             Script[EVEBot].VariableScope.Config.Combat:SetUseStandings[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <slider name='MinArmorPctFlee'>
+            <X>130</X>
+            <Y>30</Y>
+            <Width>110</Width>
+            <Height>18</Height>
+            <Range>100</Range>
+            <OnLoad>
+             This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.MinimumArmorPct}]
+             UIElement[EVEBot].FindUsableChild[MinArmorPctLabelFlee,Text]:SetText["minimum armor: ${This.Value}"]
+            </OnLoad>
+            <OnChange>
+             Script[EVEBot].VariableScope.Config.Combat:SetMinimumArmorPct[${Int[${This.Value}]}]
+             UIElement[EVEBot].FindUsableChild[MinArmorPctLabelFlee,Text]:SetText["minimum armor: ${This.Value}"]
+            </OnChange>
+           </slider>
+           <Text name='MinArmorPctLabelFlee'>
+            <X>250</X>
+            <Y>30</Y>
+            <Width>150</Width>
+            <Height>10</Height>
+            <Text>Minimum Armor: 0</Text>
+            <AutoTooltip>lowest armor percent allowed before fleeing</AutoTooltip>
+            <OnLoad>
+             This:SetText["minimum armor: ${UIElement[EVEBot].FindUsableChild[MinArmorPctFlee,slider].Value}"]
+            </OnLoad>
+           </Text>
+           <slider name='MinShieldPctFlee'>
+            <X>130</X>
+            <Y>10</Y>
+            <Width>110</Width>
+            <Height>18</Height>
+            <Range>100</Range>
+            <OnLoad>
+             This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.MinimumShieldPct}]
+             UIElement[EVEBot].FindUsableChild[MinShieldPctLabelFlee,Text]:SetText["minimum shield: ${This.Value}"]
+            </OnLoad>
+            <OnChange>
+             Script[EVEBot].VariableScope.Config.Combat:SetMinimumShieldPct[${Int[${This.Value}]}]
+             UIElement[EVEBot].FindUsableChild[MinShieldPctLabelFlee,Text]:SetText["minimum shield: ${This.Value}"]
+            </OnChange>
+           </slider>
+           <Text name='MinShieldPctLabelFlee'>
+            <X>250</X>
+            <Y>10</Y>
+            <Width>150</Width>
+            <Height>10</Height>
+            <Text>minimum shield: 0</Text>
+            <AutoTooltip>lowest shield percent allowed before fleeing</AutoTooltip>
+            <OnLoad>
+             This:SetText["minimum shield: ${UIElement[EVEBot].FindUsableChild[MinShieldPctFlee,slider].Value}"]
+            </OnLoad>
+           </Text>
+           <slider name='MinCapPctFlee'>
+            <X>130</X>
+            <Y>50</Y>
+            <Width>110</Width>
+            <Height>18</Height>
+            <Range>100</Range>
+            <OnLoad>
+             This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.MinimumCapPct}]
+             UIElement[EVEBot].FindUsableChild[MinCapPctLabelFlee,Text]:SetText["minimum cap: ${This.Value}"]
+            </OnLoad>
+            <OnChange>
+             Script[EVEBot].VariableScope.Config.Combat:SetMinimumCapPct[${Int[${This.Value}]}]
+             UIElement[EVEBot].FindUsableChild[MinCapPctLabelFlee,Text]:SetText["minimum cap: ${This.Value}"]
+            </OnChange>
+           </slider>
+           <Text name='MinCapPctLabelFlee'>
+            <X>250</X>
+            <Y>50</Y>
+            <Width>150</Width>
+            <Height>10</Height>
+            <Text>minimum cap: 0</Text>
+            <AutoTooltip>lowest capacitor percent allowed before fleeing</AutoTooltip>
+            <OnLoad>
+             This:SetText["minimum cap: ${UIElement[EVEBot].FindUsableChild[MinCapPctFlee,slider].Value}"]
+            </OnLoad>
+           </Text>
+           <checkbox name='MinShieldPctLabelFleeGameOver'>
+            <X>245</X>
+            <Y>70</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>gameover minimum shield: 0</Text>
+            <AutoTooltip>If checked, use exit from EVE.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.GameOverShield}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverShield[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <slider name='MinShieldPctFleeGameOver'>
+            <X>130</X>
+            <Y>70</Y>
+            <Width>110</Width>
+            <Height>18</Height>
+            <Range>100</Range>
+            <OnLoad>
+             This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.GameOverShieldTrashHold}]
+             UIElement[EVEBot].FindUsableChild[MinShieldPctLabelFleeGameOver,checkbox]:SetText["gameover minimum shield: ${This.Value}"]
+            </OnLoad>
+            <OnChange>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverShieldTrashHold[${Int[${This.Value}]}]
+             UIElement[EVEBot].FindUsableChild[MinShieldPctLabelFleeGameOver,checkbox]:SetText["gameover minimum shield: ${This.Value}"]
+            </OnChange>
+           </slider>
+           <checkbox name='MinArmorPctLabelFleeGameOver'>
+            <X>245</X>
+            <Y>90</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>gameover minimum armor: 0</Text>
+            <AutoTooltip>If checked, use exit from EVE.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.GameOverArmor}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverArmor[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <slider name='MinArmorPctFleeGameOver'>
+            <X>130</X>
+            <Y>90</Y>
+            <Width>110</Width>
+            <Height>18</Height>
+            <Range>100</Range>
+            <OnLoad>
+             This:SetValue[${Script[EVEBot].VariableScope.Config.Combat.GameOverArmorTrashHold}]
+             UIElement[EVEBot].FindUsableChild[MinArmorPctLabelFleeGameOver,checkbox]:SetText["gameover minimum armor: ${This.Value}"]
+            </OnLoad>
+            <OnChange>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverArmorTrashHold[${Int[${This.Value}]}]
+             UIElement[EVEBot].FindUsableChild[MinArmorPctLabelFleeGameOver,checkbox]:SetText["gameover minimum armor: ${This.Value}"]
+            </OnChange>
+           </slider>
+           <checkbox name='cbBreaks'>
+            <X>10</X>
+            <Y>170</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <Text>take a break for              hours every               hours</Text>
+            <AutoTooltip>If checked, will dock your ship at your panic location every for a break according to the information specified. Restart after changing these values.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.TakeBreaks}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetTakeBreaks[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <combobox name='comboBreakDuration'>
+            <X>120</X>
+            <Y>170</Y>
+            <Width>50</Width>
+            <Height>15</Height>
+            <FullHeight>200</FullHeight>
+            <ButtonWidth>20</ButtonWidth>
+            <Items>
+             <Item Value='1'>1</Item>
+             <Item Value='2'>2</Item>
+             <Item Value='3'>3</Item>
+             <Item Value='4'>4</Item>
+             <Item Value='5'>5</Item>
+            </Items>
+            <OnSelect>
+             Script[EVEBot].VariableScope.Config.Combat:SetBreakDuration[${This.SelectedItem.Value}]
+            </OnSelect>
+            <OnLoad>
+             This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.BreakDuration}].ID}]
+            </OnLoad>
+           </combobox>
+           <combobox name='comboTimeBetweenBreaks'>
+            <X>240</X>
+            <Y>170</Y>
+            <Width>50</Width>
+            <Height>15</Height>
+            <FullHeight>200</FullHeight>
+            <ButtonWidth>20</ButtonWidth>
+            <Items>
+             <Item Value='1'>1</Item>
+             <Item Value='2'>2</Item>
+             <Item Value='3'>3</Item>
+             <Item Value='4'>4</Item>
+             <Item Value='5'>5</Item>
+             <Item Value='6'>6</Item>
+            </Items>
+            <OnSelect>
+             Script[EVEBot].VariableScope.Config.Combat:SetTimeBetweenBreaks[${This.SelectedItem.Value}]
+            </OnSelect>
+            <OnLoad>
+             This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.TimeBetweenBreaks}].ID}]
+            </OnLoad>
+           </combobox>
+           <checkbox name='cbSafeCooldown'>
+            <X>10</X>
+            <Y>150</Y>
+            <Height>20</Height>
+            <Width>20</Width>
+            <Text>wait              plus random              mins after neutral</Text>
+            <AutoTooltip>If checked, will dock your ship at your panic location every for a break according to the information specified. Restart after changing these values.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.UseSafeCooldown}
+             {
+             This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetUseSafeCooldown[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <combobox name='comboSafeCooldown'>
+            <X>55</X>
+            <Y>150</Y>
+            <Width>50</Width>
+            <Height>15</Height>
+            <FullHeight>200</FullHeight>
+            <ButtonWidth>20</ButtonWidth>
+            <Items>
+             <Item Value='1'>1</Item>
+             <Item Value='5'>5</Item>
+             <Item Value='10'>10</Item>
+             <Item Value='20'>20</Item>
+             <Item Value='30'>30</Item>
+             <Item Value='40'>40</Item>
+             <Item Value='50'>50</Item>
+             <Item Value='60'>60</Item>
+            </Items>
+            <OnSelect>
+             Script[EVEBot].VariableScope.Config.Combat:SetSafeCooldown[${This.SelectedItem.Value}]
+            </OnSelect>
+            <OnLoad>
+             This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.SafeCooldown}].ID}]
+            </OnLoad>
+           </combobox>
+           <combobox name='comboSafeCooldownRandom'>
+            <X>177</X>
+            <Y>150</Y>
+            <Width>50</Width>
+            <Height>15</Height>
+            <FullHeight>200</FullHeight>
+            <ButtonWidth>20</ButtonWidth>
+            <Items>
+             <Item Value='1'>1</Item>
+             <Item Value='5'>5</Item>
+             <Item Value='10'>10</Item>
+             <Item Value='20'>20</Item>
+             <Item Value='30'>30</Item>
+             <Item Value='40'>40</Item>
+             <Item Value='50'>50</Item>
+             <Item Value='60'>60</Item>
+            </Items>
+            <OnSelect>
+             Script[EVEBot].VariableScope.Config.Combat:SetSafeCooldownRandom[${This.SelectedItem.Value}]
+            </OnSelect>
+            <OnLoad>
+             This:SetSelection[${This.ItemByText[${Script[EVEBot].VariableScope.Config.Combat.SafeCooldownRandom}].ID}]
+            </OnLoad>
+           </combobox>
+           <checkbox name='cbGameOverGrid'>
+            <X>115</X>
+            <Y>110</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>gameover grid</text>
+            <AutoTooltip>If checked, use emergency exit from EVE when someone except corpmates appears at grid.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.GameOverGrid}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverGrid[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbGameOverHostileScrambled'>
+            <X>245</X>
+            <Y>110</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>gameover hostile scrambled</text>
+            <AutoTooltip>If checked, use emergency exit from EVE when ship scrambled and hostile appears at local.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.GameOverHostileScrambled}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverHostileScrambled[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbLootFaction'>
+            <X>115</X>
+            <Y>130</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>loot faction wreck</text>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.LootFaction}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetLootFaction[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbGameOverBlackList'>
+            <X>345</X>
+            <Y>130</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>gameover blacklist</text>
+            <AutoTooltip>If checked, use exit from EVE when blacklisted user in local.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.GameOverBlackList}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetGameOverBlackList[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbAlwaysShieldBoost'>
+            <X>345</X>
+            <Y>150</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>always shield boost</text>
+            <AutoTooltip>Turn Shield Booster on full-time, instead of on-demand.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.AlwaysShieldBoost}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetAlwaysShieldBoost[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+           <checkbox name='cbAlwaysArmorBoost'>
+            <X>345</X>
+            <Y>170</Y>
+            <Height>20</Height>
+            <Width>100</Width>
+            <text>always armor boost</text>
+            <AutoTooltip>Turn Armor Booster on full-time, instead of on-demand.</AutoTooltip>
+            <OnLoad>
+             if ${Script[EVEBot].VariableScope.Config.Combat.AlwaysArmorBoost}
+             {
+              This:SetChecked
+             }
+            </OnLoad>
+            <OnLeftClick>
+             Script[EVEBot].VariableScope.Config.Combat:SetAlwaysArmorBoost[${This.Checked}]
+            </OnLeftClick>
+           </checkbox>
+          </children>
+         </frame>
+        </Tab>
+
+
+        <Tab Name='whitelist'>
+         <listbox name='lbWLLocal'>
+          <x>10</x>
+          <y>5</y>
+          <width>180</width>
+          <height>295</height>
+          <sort>text</sort>
+          <OnLeftClick>
+           variable string l="WL"
+           UIElement[EVEBot].FindUsableChild[lbFlee${l}Char,listbox]:ClearSelection
+           UIElement[EVEBot].FindUsableChild[lbFlee${l}Corp,listbox]:ClearSelection
+           UIElement[EVEBot].FindUsableChild[lbFlee${l}Ally,listbox]:ClearSelection
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[]
+           if ${This.SelectedItems} > 0
+           {
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Name} (${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].CharID})]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].CharID}]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Corp.Name} (${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Corp.ID})]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Corp.ID}]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Alliance} (${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].AllianceID})]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].AllianceID}]
+           }
+          </OnLeftClick>
+         </listbox>
+         <button name='btnWLRefresh' template='EveSkin.Window.ClickButton'>
+          <x>20</x>
+          <y>301</y>
+          <width>160</width>
+          <height>15</height>
+          <text>refresh local</text>
+          <OnLeftClick>
+           variable string l="WL"
+           variable string lbname = ${UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox].FullName}
+           variable index:pilot pilots
+           variable iterator piter
+           Script[EVEBot].VariableScope.UI.pilcol:EraseByQuery[${LavishScript.CreateQuery[TRUE]}]
+           EVE:GetLocalPilots[pilots]
+           pilots:GetIterator[piter]
+           UIElement[${lbname}]:ClearItems
+           if ${piter:First(exists)}
+           {
+            do
+            {
+             if !${piter.Value.CharID.Equal[${Me.CharID}]}
+             {
+              Script[EVEBot].VariableScope.UI.pilcol:Set[${piter.Value.CharID}, ${piter.Value}]
+              UIElement[${lbname}]:AddItem[${piter.Value.Name}, ${piter.Value.CharID}]
+             }
+            }
+            while ${piter:Next(exists)}
+           }
+           UIElement[${lbname}]:Sort
+          </OnLeftClick>
+         </button>
+         <TabControl Name='FleeingWLTabcontrol' template='EVESkin.TabControl'>
+          <x>195</x>
+          <y>0</y>
+          <width>305</width>
+          <height>100%</height>
+          <Tabs>
+           <Tab name='char'>
+            <frame name='charWLfleeFrame'>
+             <x>0</x>
+             <y>0</y>
+             <width>100%</width>
+             <height>100%</height>
+             <children>
+              <listbox name='lbFleeWLChar'>
+               <x>10</x>
+               <y>5</y>
+               <width>285</width>
+               <height>257</height>
+               <sort>text</sort>
+               <OnLoad>
+                This:RightClick
+               </OnLoad>
+               <OnLeftClick>
+                variable string l="WL"
+                UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox]:ClearSelection
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[]
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[]
+                if ${This.SelectedItems} > 0
+                {
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[${This.SelectedItem[1].Text}]
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[${This.SelectedItem[1].Value}]
+                }
+               </OnLeftClick>
+               <OnRightClick>
+                This:ClearItems
+                variable iterator i
+                Script[EVEBot].VariableScope.Whitelist.PilotsRef:GetSettingIterator[i]
+                if ${i:First(exists)}
+                {
+                 do
+                 {
+                  This:AddItem[${i.Key},${i.Value}]
+                 }
+                 while ${i:Next(exists)}
+                }
+                This:Sort
+               </OnRightClick>
+              </listbox>
+              <Text name='txFleeWLCharDesc'>
+               <X>15</X>
+               <Y>265</Y>
+               <Width>40</Width>
+               <Height>10</Height>
+               <Text>desc:</Text>
+              </Text>
+              <TextEntry name='teFleeWLCharDesc'>
+               <X>45</X>
+               <Y>265</Y>
+               <Width>243</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <Text name='txFleeWLCharID'>
+               <X>15</X>
+               <Y>283</Y>
+               <Width>20</Width>
+               <Height>10</Height>
+               <Text>id:</Text>
+              </Text>
+              <TextEntry name='teFleeWLCharID'>
+               <X>45</X>
+               <Y>283</Y>
+               <Width>205</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <button Name='btFleeWLCharAdd' template='EVEskin.Add.Texture'>
+               <X>253</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="WL"
+                variable int64 id=${UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry].Text}
+                if !${id.Equal[0]}
+                {
+                 Script[EVEBot].VariableScope.Social:Add${l}[\
+                  Pilot, \
+                  ${id}, \
+                  ${UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry].Text} \
+                 ]
+                }
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Char,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+              <button Name='btFleeWLCharRemove' template='EVEskin.Remove.Texture'>
+               <X>272</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="WL"
+                Script[EVEBot].VariableScope.Social:Del${l}[ \
+                 Pilot, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry].Text}, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry].Text} \
+                ]
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Char,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+             </children>
+            </frame>
+           </Tab>
+           <Tab name='corp'>
+            <frame name='corpWLfleeFrame'>
+             <x>0</x>
+             <y>0</y>
+             <width>100%</width>
+             <height>100%</height>
+             <children>
+              <listbox name='lbFleeWLCorp'>
+               <x>10</x>
+               <y>5</y>
+               <width>285</width>
+               <height>257</height>
+               <sort>text</sort>
+               <OnLoad>
+                This:RightClick
+               </OnLoad>
+               <OnLeftClick>
+                variable string l="WL"
+                UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox]:ClearSelection
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[]
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[]
+                if ${This.SelectedItems} > 0
+                {
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[${This.SelectedItem[1].Text}]
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[${This.SelectedItem[1].Value}]
+                }
+               </OnLeftClick>
+               <OnRightClick>
+                This:ClearItems
+                variable iterator i
+                Script[EVEBot].VariableScope.Whitelist.CorporationsRef:GetSettingIterator[i]
+                if ${i:First(exists)}
+                {
+                 do
+                 {
+                  This:AddItem[${i.Key},${i.Value}]
+                 }
+                 while ${i:Next(exists)}
+                }
+                This:Sort
+               </OnRightClick>
+              </listbox>
+              <Text name='txFleeWLCorpDesc'>
+               <X>15</X>
+               <Y>265</Y>
+               <Width>40</Width>
+               <Height>10</Height>
+               <Text>desc:</Text>
+              </Text>
+              <TextEntry name='teFleeWLCorpDesc'>
+               <X>45</X>
+               <Y>265</Y>
+               <Width>243</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <Text name='txFleeWLCorpID'>
+               <X>15</X>
+               <Y>283</Y>
+               <Width>20</Width>
+               <Height>10</Height>
+               <Text>id:</Text>
+              </Text>
+              <TextEntry name='teFleeWLCorpID'>
+               <X>45</X>
+               <Y>283</Y>
+               <Width>205</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <button Name='btFleeWLCorpAdd' template='EVEskin.Add.Texture'>
+               <X>253</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="WL"
+                variable int64 id=${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry].Text}
+                if !${id.Equal[0]}
+                {
+                 Script[EVEBot].VariableScope.Social:Add${l}[\
+                  Corporation, \
+                  ${id}, \
+                  ${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry].Text} \
+                 ]
+                }
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Corp,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+              <button Name='btFleeWLCorpRemove' template='EVEskin.Remove.Texture'>
+               <X>272</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="WL"
+                Script[EVEBot].VariableScope.Social:Del${l}[ \
+                 Corporation, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry].Text}, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry].Text} \
+                ]
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Corp,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+             </children>
+            </frame>
+           </Tab>
+           <Tab name='ally'>
+            <frame name='allyWLfleeFrame'>
+             <x>0</x>
+             <y>0</y>
+             <width>100%</width>
+             <height>100%</height>
+             <children>
+              <listbox name='lbFleeWLAlly'>
+               <x>10</x>
+               <y>5</y>
+               <width>285</width>
+               <height>257</height>
+               <sort>text</sort>
+               <OnLoad>
+                This:RightClick
+               </OnLoad>
+               <OnLeftClick>
+                variable string l="WL"
+                UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox]:ClearSelection
+                UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[]
+                UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[]
+                if ${This.SelectedItems} > 0
+                {
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[${This.SelectedItem[1].Text}]
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[${This.SelectedItem[1].Value}]
+                }
+               </OnLeftClick>
+               <OnRightClick>
+                This:ClearItems
+                variable iterator i
+                Script[EVEBot].VariableScope.Whitelist.AlliancesRef:GetSettingIterator[i]
+                if ${i:First(exists)}
+                {
+                 do
+                 {
+                  This:AddItem[${i.Key},${i.Value}]
+                 }
+                 while ${i:Next(exists)}
+                }
+                This:Sort
+               </OnRightClick>
+              </listbox>
+              <Text name='txFleeWLAllyDesc'>
+               <X>15</X>
+               <Y>265</Y>
+               <Width>40</Width>
+               <Height>10</Height>
+               <Text>desc:</Text>
+              </Text>
+              <TextEntry name='teFleeWLAllyDesc'>
+               <X>45</X>
+               <Y>265</Y>
+               <Width>243</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <Text name='txFleeWLAllyID'>
+               <X>15</X>
+               <Y>283</Y>
+               <Width>20</Width>
+               <Height>10</Height>
+               <Text>id:</Text>
+              </Text>
+              <TextEntry name='teFleeWLAllyID'>
+               <X>45</X>
+               <Y>283</Y>
+               <Width>205</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <button Name='btFleeWLAllyAdd' template='EVEskin.Add.Texture'>
+               <X>253</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="WL"
+                variable int64 id=${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry].Text}
+                if !${id.Equal[0]}
+                {
+                 Script[EVEBot].VariableScope.Social:Add${l}[\
+                  Alliance, \
+                  ${id}, \
+                  ${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry].Text} \
+                 ]
+                }
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Ally,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+              <button Name='btFleeWLAllyRemove' template='EVEskin.Remove.Texture'>
+               <X>272</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="WL"
+                Script[EVEBot].VariableScope.Social:Del${l}[ \
+                 Alliance, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry].Text}, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry].Text} \
+                ]
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Ally,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+             </children>
+            </frame>
+           </Tab>
+          </Tabs>
+         </TabControl>
+        </Tab>
+        <Tab Name='blacklist'>
+         <listbox name='lbBLLocal'>
+          <x>10</x>
+          <y>5</y>
+          <width>180</width>
+          <height>295</height>
+          <sort>text</sort>
+          <OnLeftClick>
+           variable string l="BL"
+           UIElement[EVEBot].FindUsableChild[lbFlee${l}Char,listbox]:ClearSelection
+           UIElement[EVEBot].FindUsableChild[lbFlee${l}Corp,listbox]:ClearSelection
+           UIElement[EVEBot].FindUsableChild[lbFlee${l}Ally,listbox]:ClearSelection
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[]
+           UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[]
+           if ${This.SelectedItems} > 0
+           {
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Name} (${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].CharID})]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].CharID}]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Corp.Name} (${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Corp.ID})]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Corp.ID}]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].Alliance} (${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].AllianceID})]
+            UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[${Script[EVEBot].VariableScope.UI.pilcol.Element[${This.SelectedItem[1].Value}].AllianceID}]
+           }
+          </OnLeftClick>
+         </listbox>
+         <button name='btnBLRefresh' template='EveSkin.Window.ClickButton'>
+          <x>20</x>
+          <y>301</y>
+          <width>160</width>
+          <height>15</height>
+          <text>refresh local</text>
+          <OnLeftClick>
+           variable string l="BL"
+           variable string lbname = ${UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox].FullName}
+           variable index:pilot pilots
+           variable iterator piter
+           Script[EVEBot].VariableScope.UI.pilcol:EraseByQuery[${LavishScript.CreateQuery[TRUE]}]
+           EVE:GetLocalPilots[pilots]
+           pilots:GetIterator[piter]
+           UIElement[${lbname}]:ClearItems
+           if ${piter:First(exists)}
+           {
+            do
+            {
+             if !${piter.Value.CharID.Equal[${Me.CharID}]}
+             {
+              Script[EVEBot].VariableScope.UI.pilcol:Set[${piter.Value.CharID}, ${piter.Value}]
+              UIElement[${lbname}]:AddItem[${piter.Value.Name}, ${piter.Value.CharID}]
+             }
+            }
+            while ${piter:Next(exists)}
+           }
+           UIElement[${lbname}]:Sort
+          </OnLeftClick>
+         </button>
+         <TabControl Name='FleeingBLTabcontrol' template='EVESkin.TabControl'>
+          <x>195</x>
+          <y>0</y>
+          <width>305</width>
+          <height>100%</height>
+          <Tabs>
+           <Tab name='char'>
+            <frame name='charBLfleeFrame'>
+             <x>0</x>
+             <y>0</y>
+             <width>100%</width>
+             <height>100%</height>
+             <children>
+              <listbox name='lbFleeBLChar'>
+               <x>10</x>
+               <y>5</y>
+               <width>285</width>
+               <height>257</height>
+               <sort>text</sort>
+               <OnLoad>
+                This:RightClick
+               </OnLoad>
+               <OnLeftClick>
+                variable string l="BL"
+                UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox]:ClearSelection
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[]
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[]
+                if ${This.SelectedItems} > 0
+                {
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry]:SetText[${This.SelectedItem[1].Text}]
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry]:SetText[${This.SelectedItem[1].Value}]
+                }
+               </OnLeftClick>
+               <OnRightClick>
+                This:ClearItems
+                variable iterator i
+                Script[EVEBot].VariableScope.Blacklist.PilotsRef:GetSettingIterator[i]
+                if ${i:First(exists)}
+                {
+                 do
+                 {
+                  This:AddItem[${i.Key},${i.Value}]
+                 }
+                 while ${i:Next(exists)}
+                }
+                This:Sort
+               </OnRightClick>
+              </listbox>
+              <Text name='txFleeBLCharDesc'>
+               <X>15</X>
+               <Y>265</Y>
+               <Width>40</Width>
+               <Height>10</Height>
+               <Text>desc:</Text>
+              </Text>
+              <TextEntry name='teFleeBLCharDesc'>
+               <X>45</X>
+               <Y>265</Y>
+               <Width>243</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <Text name='txFleeBLCharID'>
+               <X>15</X>
+               <Y>283</Y>
+               <Width>20</Width>
+               <Height>10</Height>
+               <Text>id:</Text>
+              </Text>
+              <TextEntry name='teFleeBLCharID'>
+               <X>45</X>
+               <Y>283</Y>
+               <Width>205</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <button Name='btFleeBLCharAdd' template='EVEskin.Add.Texture'>
+               <X>253</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="BL"
+                variable int64 id=${UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry].Text}
+                if !${id.Equal[0]}
+                {
+                 Script[EVEBot].VariableScope.Social:Add${l}[\
+                  Pilot, \
+                  ${id}, \
+                  ${UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry].Text} \
+                 ]
+                }
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Char,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+              <button Name='btFleeBLCharRemove' template='EVEskin.Remove.Texture'>
+               <X>272</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="BL"
+                Script[EVEBot].VariableScope.Social:Del${l}[ \
+                 Pilot, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CharID,TextEntry].Text}, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CharDesc,TextEntry].Text} \
+                ]
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Char,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+             </children>
+            </frame>
+           </Tab>
+           <Tab name='corp'>
+            <frame name='corpBLfleeFrame'>
+             <x>0</x>
+             <y>0</y>
+             <width>100%</width>
+             <height>100%</height>
+             <children>
+              <listbox name='lbFleeBLCorp'>
+               <x>10</x>
+               <y>5</y>
+               <width>285</width>
+               <height>257</height>
+               <sort>text</sort>
+               <OnLoad>
+                This:RightClick
+               </OnLoad>
+               <OnLeftClick>
+                variable string l="BL"
+                UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox]:ClearSelection
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[]
+                UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[]
+                if ${This.SelectedItems} > 0
+                {
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry]:SetText[${This.SelectedItem[1].Text}]
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry]:SetText[${This.SelectedItem[1].Value}]
+                }
+               </OnLeftClick>
+               <OnRightClick>
+                This:ClearItems
+                variable iterator i
+                Script[EVEBot].VariableScope.Blacklist.CorporationsRef:GetSettingIterator[i]
+                if ${i:First(exists)}
+                {
+                 do
+                 {
+                  This:AddItem[${i.Key},${i.Value}]
+                 }
+                 while ${i:Next(exists)}
+                }
+                This:Sort
+               </OnRightClick>
+              </listbox>
+              <Text name='txFleeBLCorpDesc'>
+               <X>15</X>
+               <Y>265</Y>
+               <Width>40</Width>
+               <Height>10</Height>
+               <Text>desc:</Text>
+              </Text>
+              <TextEntry name='teFleeBLCorpDesc'>
+               <X>45</X>
+               <Y>265</Y>
+               <Width>243</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <Text name='txFleeBLCorpID'>
+               <X>15</X>
+               <Y>283</Y>
+               <Width>20</Width>
+               <Height>10</Height>
+               <Text>id:</Text>
+              </Text>
+              <TextEntry name='teFleeBLCorpID'>
+               <X>45</X>
+               <Y>283</Y>
+               <Width>205</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <button Name='btFleeBLCorpAdd' template='EVEskin.Add.Texture'>
+               <X>253</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="BL"
+                variable int64 id=${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry].Text}
+                if !${id.Equal[0]}
+                {
+                 Script[EVEBot].VariableScope.Social:Add${l}[\
+                  Corporation, \
+                  ${id}, \
+                  ${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry].Text} \
+                 ]
+                }
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Corp,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+              <button Name='btFleeBLCorpRemove' template='EVEskin.Remove.Texture'>
+               <X>272</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="BL"
+                Script[EVEBot].VariableScope.Social:Del${l}[ \
+                 Corporation, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpID,TextEntry].Text}, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}CorpDesc,TextEntry].Text} \
+                ]
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Corp,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+             </children>
+            </frame>
+           </Tab>
+           <Tab name='ally'>
+            <frame name='allyBLfleeFrame'>
+             <x>0</x>
+             <y>0</y>
+             <width>100%</width>
+             <height>100%</height>
+             <children>
+              <listbox name='lbFleeBLAlly'>
+               <x>10</x>
+               <y>5</y>
+               <width>285</width>
+               <height>257</height>
+               <sort>text</sort>
+               <OnLoad>
+                This:RightClick
+               </OnLoad>
+               <OnLeftClick>
+                variable string l="BL"
+                UIElement[EVEBot].FindUsableChild[lb${l}Local,listbox]:ClearSelection
+                UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[]
+                UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[]
+                if ${This.SelectedItems} > 0
+                {
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry]:SetText[${This.SelectedItem[1].Text}]
+                 UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry]:SetText[${This.SelectedItem[1].Value}]
+                }
+               </OnLeftClick>
+               <OnRightClick>
+                This:ClearItems
+                variable iterator i
+                Script[EVEBot].VariableScope.Blacklist.AlliancesRef:GetSettingIterator[i]
+                if ${i:First(exists)}
+                {
+                 do
+                 {
+                  This:AddItem[${i.Key},${i.Value}]
+                 }
+                 while ${i:Next(exists)}
+                }
+                This:Sort
+               </OnRightClick>
+              </listbox>
+              <Text name='txFleeBLAllyDesc'>
+               <X>15</X>
+               <Y>265</Y>
+               <Width>40</Width>
+               <Height>10</Height>
+               <Text>desc:</Text>
+              </Text>
+              <TextEntry name='teFleeBLAllyDesc'>
+               <X>45</X>
+               <Y>265</Y>
+               <Width>243</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <Text name='txFleeBLAllyID'>
+               <X>15</X>
+               <Y>283</Y>
+               <Width>20</Width>
+               <Height>10</Height>
+               <Text>id:</Text>
+              </Text>
+              <TextEntry name='teFleeBLAllyID'>
+               <X>45</X>
+               <Y>283</Y>
+               <Width>205</Width>
+               <Height>16</Height>
+               <MaxLength>50</MaxLength>
+              </TextEntry>
+              <button Name='btFleeBLAllyAdd' template='EVEskin.Add.Texture'>
+               <X>253</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="BL"
+                variable int64 id=${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry].Text}
+                if !${id.Equal[0]}
+                {
+                 Script[EVEBot].VariableScope.Social:Add${l}[\
+                  Alliance, \
+                  ${id}, \
+                  ${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry].Text} \
+                 ]
+                }
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Ally,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+              <button Name='btFleeBLAllyRemove' template='EVEskin.Remove.Texture'>
+               <X>272</X>
+               <Y>283</Y>
+               <Width>16</Width>
+               <Height>16</Height>
+               <OnLeftClick>
+                variable string l="BL"
+                Script[EVEBot].VariableScope.Social:Del${l}[ \
+                 Alliance, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyID,TextEntry].Text}, \
+                 ${UIElement[EVEBot].FindUsableChild[teFlee${l}AllyDesc,TextEntry].Text} \
+                ]
+                UIElement[EVEBot].FindUsableChild[lbFlee${l}Ally,listbox]:RightClick
+               </OnLeftClick>
+              </button>
+             </children>
+            </frame>
+           </Tab>
+          </Tabs>
+         </TabControl>
+        </Tab>
+       </Tabs>
+      </TabControl>
+     </Tab>
     </Tabs>
-   </tabcontrol>
+   </TabControl>
   </Children>
  </window>
 </ISUI>

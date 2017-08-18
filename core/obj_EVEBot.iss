@@ -13,7 +13,7 @@ objectdef obj_EVEBot
 	variable int Version
 
 	variable bool ReturnToStation = FALSE
-	variable bool Paused = FALSE
+	variable bool Paused = TRUE
 	variable time NextPulse
 	variable int PulseIntervalInSeconds = 4
 
@@ -87,14 +87,16 @@ objectdef obj_EVEBot
 				{
 					UI:UpdateConsole["EVE downtime approaching - Quitting Eve", LOG_CRITICAL]
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
 					wait ${Config.Coords.MouseDelay}
 					EVE:Execute[CmdQuitGame]
@@ -108,14 +110,16 @@ objectdef obj_EVEBot
 					{
 						UI:UpdateConsole["Maximum runtime exceeded, pausing operations", LOG_CRITICAL]
  ;----- start screenshot -----
- declare stime string
- stime:Set[${Me.Name}]
- stime:Concat[" "]
- stime:Concat[${Time.Date.Replace["/","_"]}]
- stime:Concat["-"]
- stime:Concat[${Time.Time24.Replace[":","_"]}]
- stime:Concat[".jpg"]
- Display:Screencap[${stime}]
+ Display:Screencap[ \
+  ${Me.Name}- \
+  ${Time.Year.LeadingZeroes[4]}_ \
+  ${Time.Month.LeadingZeroes[2]}_ \
+  ${Time.Day.LeadingZeroes[2]}- \
+  ${Time.Hour.LeadingZeroes[2]}_ \
+  ${Time.Minute.LeadingZeroes[2]}_ \
+  ${Time.Second.LeadingZeroes[2]}. \
+  jpg \
+ ]
  ;----- end screenshot -----
 						This.ReturnToStation:Set[TRUE]
 					}
